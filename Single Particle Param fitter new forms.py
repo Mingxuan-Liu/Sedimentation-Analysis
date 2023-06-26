@@ -16,8 +16,7 @@ from pandas import DataFrame, Series
 import matplotlib.cm as cm
 import os
 from collections import OrderedDict
-from mpl_toolkits.axes_grid.inset_locator import (inset_axes, InsetPosition,
-                                                  mark_inset)
+from mpl_toolkits.axes_grid.inset_locator import (inset_axes, InsetPosition, mark_inset)
 
 mpl.rcParams['mathtext.fontset'] = 'stix'
 mpl.rcParams['font.family'] = 'STIXGeneral'
@@ -37,13 +36,13 @@ st_term_vel = 0.0015376745623069
 ZrO2_term_vel = 0.0010572214212152416
 al_term_vel_3D = 0.000776
 
-v_light_term = al_term_vel_3D #Change this to your lightest particle
+v_light_term = st_term_vel #Change this to your lightest particle
 
 r = .001 #m
 tau = r/v_light_term
 
-p_heavy = st_density #Change this to your heaviest particle
-p_lighter = al_density #Change this to your lightest particle
+p_heavy = cu_density #Change this to your heaviest particle
+p_lighter = st_density #Change this to your lightest particle
 p_fluid = 971 #kg/m^3
 
 K = (p_heavy - 2*p_fluid + p_lighter)/(-p_fluid + p_lighter)
@@ -52,7 +51,7 @@ scales = [12.9,11.9,13.5,13.3,12.9]
 fps = 6
 colormap = cm.get_cmap('tab10')
 
-label_array=[17,18,19,20]
+label_array=[27,28,29,30,31,32,33]
 ticksize = 22
 point_spacing = 1 #every nth point
 lgnd_font = 28
@@ -146,12 +145,12 @@ t_half_arr = []
 
 fig.subplots_adjust(hspace=0)
 
-for data_loc in os.listdir(r'Z:\Tony Li\Binary Cropped\Excel Files'):
+for data_loc in sorted(os.listdir(r'Z:\Mingxuan Liu\Particle Trajectories')):
     #Reading in data and setting up counter
     count+=1
     print(data_loc)
     color = colormap(count-1)
-    file_loc = os.path.join(r'Z:\Tony Li\Binary Cropped\Excel Files',data_loc)
+    file_loc = os.path.join(r'Z:\Mingxuan Liu\Particle Trajectories',data_loc)
     particle_data = pd.read_csv(file_loc)
     
     #scale = scales[count-1] #scales array determined through imagej
@@ -161,8 +160,6 @@ for data_loc in os.listdir(r'Z:\Tony Li\Binary Cropped\Excel Files'):
     #p0 is heavier
     #p1 is lighter
     
-    density_h = 2790 #kg/m^3
-    density_l = 1420 #kg/m^3
     
     p0 = particle_data[particle_data['particle'] == 0]
     p1 = particle_data[particle_data['particle'] == 1]
@@ -199,21 +196,21 @@ for data_loc in os.listdir(r'Z:\Tony Li\Binary Cropped\Excel Files'):
     
     #Calculating the time where angle = pi/2
     #Finds the closest point to pi/2, creates a line from the points close by, then solve for t_half knowing we want pi/2
-    idx_half_close = (np.abs(angle - np.pi/2)).argmin()
+    # idx_half_close = (np.abs(angle - np.pi/2)).argmin()
     
-    line_fit_points_idx = idx_half_close + np.array([-2,-1,0,1,2])
+    # line_fit_points_idx = idx_half_close + np.array([-2,-1,0,1,2])
     
-    line_fit_points = angle[line_fit_points_idx]
-    time_half_fit = time[line_fit_points_idx]
+    # line_fit_points = angle[line_fit_points_idx]
+    # time_half_fit = time[line_fit_points_idx]
 
-    def line(t,M,B):
-        return M*t + B
-    t_h_popt,t_h_pcov = spo.curve_fit(line,time_half_fit,line_fit_points)
+    # def line(t,M,B):
+    #     return M*t + B
+    # t_h_popt,t_h_pcov = spo.curve_fit(line,time_half_fit,line_fit_points)
     
-    t_half = (np.pi/2 - t_h_popt[1])/t_h_popt[0]
-    t_half_arr.append(t_half)
+    # t_half = (np.pi/2 - t_h_popt[1])/t_h_popt[0]
+    # t_half_arr.append(t_half)
     
-    #Fitting c1
+    #Fitting c3
 #    c_init = initial_guesses[0]
     c3_init = initial_guesses_mac[2]
     theta_fit = spo.curve_fit(theta_t,time,angle,p0=[angle[0],c3_init])
@@ -227,35 +224,14 @@ for data_loc in os.listdir(r'Z:\Tony Li\Binary Cropped\Excel Files'):
     c3_arr.append(c3)
     ang_sol = theta_t(time,popt_ang[0],popt_ang[1])
     
-    #Fitting a0 b0 b1
-#    a1_init = initial_guesses[1]
-#    b0_init = initial_guesses[2]
-#    b1_init = initial_guesses[3]
-    
-#    b0_a1_init = initial_guesses_mac[0]
-#    b0_init = initial_guesses_mac[1]
-    
+    #Fitting c1 and c2
+
     c1_init = initial_guesses_mac[0]/2 + initial_guesses[1]/2
     c2_init = -initial_guesses_mac[0]/2 + initial_guesses[1]/2
     
-#    x_fit = spo.curve_fit(lambda theta,x_0,a0:x_theta(theta,x_0,a0,c1),ang_sol,x_data,p0=[x_data[0],a1_init])
-#    y_fit = spo.curve_fit(lambda theta,y_0,b0,b1:y_theta(theta,y_0,b0,b1,c1),ang_sol,-y_data,p0=[y_data[0],b0_init,b1_init])
+
     
-#    x_fit = spo.curve_fit(lambda t,x_0,a1:x_sol(t,theta_0,x_0,a1,c1),time,x_data,p0=[x_data[0],a1_init])
-#    y_fit = spo.curve_fit(lambda t,y_0,b0,b1:y_sol(t,theta_0,y_0,b0,b1,c1),time,-y_data,p0=[y_data[0],b0_init,b1_init])
-    
-#    x_fit = spo.curve_fit(lambda t,x_0,a1:x_sol_lim(t,theta_0,x_0,a1),time,x_data,p0=[x_data[0],a1_init])
-#    y_fit = spo.curve_fit(lambda t,y_0,b0,b1:y_sol_lim(t,theta_0,y_0,b0,b1),time,-y_data,p0=[y_data[0],b0_init,b1_init])
-    
-#    x_fit = spo.curve_fit(lambda theta,x_0,b0_a1:x_theta_mac(theta,theta_0,x_0,b0_a1,c1),ang_sol,x_data,p0=[x_data[0],b0_a1_init])
-#    popt_x = x_fit[0]
-#    x_0 = popt_x[0]
-#    b0_a1 = popt_x[1]
-#    
-#    y_fit = spo.curve_fit(lambda theta,y_0,b0:y_theta_mac(theta,theta_0,y_0,b0,b0_a1,c1),ang_sol,-y_data,p0=[y_data[0],b0_init])
-#    popt_y = y_fit[0]
-#    y_0 = popt_y[0]
-#    b0 = popt_y[1]
+
     
     x_fit = spo.curve_fit(lambda t,x_0,c2:x_sol_2(t,theta_0,x_0,c2,c3),time,x_data,p0=[x_data[0],c2_init])
 #    x_fit = spo.curve_fit(lambda t,x_0,c2:x_sol_lim(t,theta_0,x_0,c2),time,x_data,p0=[x_data[0],c2_init])
@@ -277,53 +253,29 @@ for data_loc in os.listdir(r'Z:\Tony Li\Binary Cropped\Excel Files'):
     c1 = popt_y[1]
     c1_arr.append(c1)
     
-#    x_0 = popt_x[0]
-#    y_0 = popt_y[0]
-#    
     x_0_arr.append(x_0)
     y_0_arr.append(y_0)
-#    
-#    
-#    a1 = popt_x[1]
-#    b0 = popt_y[2]
-#    
-#    a1_y = popt_y[1]
-#    b0_x = popt_x[1]
-#    b1 = popt_y[2]
+
     
-#    a1_arr.append(a1)
-#    b0_arr.append(b0)
-#    b1_arr.append(b1)
-    
-#    a1_arr.append(b0-b0_a1)
-#    b0_arr.append(b0)
-    
-#    x_solution = x_theta(ang_sol,x_0,a1,c1)
-#    y_solution = y_theta(ang_sol,y_0,b0,b1,c1)
-    
-#    x_solution = x_sol(time,theta_0,x_0,a1,c1)
-#    y_solution = y_sol(time,theta_0,y_0,b0,b1,c1)
     
 #    x_solution = x_sol_lim(time,theta_0,x_0,c2)
 #    y_solution = y_sol_lim(time,theta_0,y_0,c1,c2)
     
-#    x_solution = x_theta_mac(ang_sol,theta_0,x_0,b0_a1,c1)
-#    y_solution = y_theta_mac(ang_sol,theta_0,y_0,b0,b0_a1,c1)
     
     x_solution = x_sol_2(time,theta_0,x_0,c2,c3)
     y_solution = y_sol_2(time,theta_0,y_0,c1,c2,c3)
     
-    marker = plot_symbols[count-1]
-    idx_t_half = (np.abs(time-t_half)).argmin()
+    marker = 'o'
+    # idx_t_half = (np.abs(time-t_half)).argmin()
     
 
     
     #Plotting y vs. t and inset
-    ax2.scatter(time[::point_spacing]-t_half,-y_data[::point_spacing] + y_data[idx_t_half],s=200,fc = 'none',edgecolor=color,label = 'Data',marker=marker)
-    ax2.plot(time-t_half,y_solution - y_solution[idx_t_half],linewidth=lw,color=color,label='Model')
+    # ax2.scatter(time[::point_spacing]-t_half,-y_data[::point_spacing] + y_data[idx_t_half],s=200,fc = 'none',edgecolor=color,label = 'Data',marker=marker)
+    # ax2.plot(time-t_half,y_solution - y_solution[idx_t_half],linewidth=lw,color=color,label='Model')
     
-#    ax2.scatter(time[::point_spacing],-y_data[::point_spacing],s=200,fc = 'none',edgecolor=color,label = 'Data',marker=marker)
-#    ax2.plot(time,y_solution,linewidth=lw,color=color,label='Model')
+    ax2.scatter(time[::point_spacing],-y_data[::point_spacing],s=200,fc = 'none',edgecolor=color,label = 'Data',marker=marker)
+    ax2.plot(time,y_solution,linewidth=lw,color=color,label='Model')
     
     #plt.xlabel('time (scaled)',fontsize = 48)
     ax2.set_ylabel('y/R',fontsize = 30)
@@ -331,18 +283,18 @@ for data_loc in os.listdir(r'Z:\Tony Li\Binary Cropped\Excel Files'):
     ip = InsetPosition(ax2, [.68,.6,.3,.35])
     ax5.set_axes_locator(ip)
     ax5.axhline(y=0,linestyle=":",color='k',linewidth=1)
-    ax5.plot(time-t_half,y_data + y_solution,linewidth=lw-1.75,color=color)
+    ax5.plot(time,y_data + y_solution,linewidth=lw-1.75,color=color) #Put back t-t_half
     ax5.set_ylabel('y - y$_{m}$',labelpad=3,fontsize=20)
     ax5.set_xlabel(r't/$\tau $',labelpad=-1.5,fontsize=20)
     ax5.set_ylim(-.5,.5)
 #    ax5.set_xlim(time[0]-2-t_half,time[-1]+2-t_half)
     
     #Plotting x vs. t
-    ax3.scatter(time[::point_spacing]-t_half,x_data[::point_spacing] - x_data[idx_t_half],s=200,fc = 'none',edgecolor=color,label = 'Data',marker=marker)
-    ax3.plot(time-t_half,x_solution - x_solution[idx_t_half],linewidth=lw,color=color,label='Model')
+    # ax3.scatter(time[::point_spacing]-t_half,x_data[::point_spacing] - x_data[idx_t_half],s=200,fc = 'none',edgecolor=color,label = 'Data',marker=marker)
+    # ax3.plot(time-t_half,x_solution - x_solution[idx_t_half],linewidth=lw,color=color,label='Model')
     
-#    ax3.scatter(time[::point_spacing],x_data[::point_spacing],s=200,fc = 'none',edgecolor=color,label = 'Data',marker=marker)
-#    ax3.plot(time,x_solution,linewidth=lw,color=color,label='Model')
+    ax3.scatter(time[::point_spacing],x_data[::point_spacing],s=200,fc = 'none',edgecolor=color,label = 'Data',marker=marker)
+    ax3.plot(time,x_solution,linewidth=lw,color=color,label='Model')
     
     ax3.set_xlabel(r't/$\tau $',fontsize = 30)
     ax3.set_ylabel('x/R',fontsize = 30,labelpad=-5)
@@ -353,27 +305,26 @@ for data_loc in os.listdir(r'Z:\Tony Li\Binary Cropped\Excel Files'):
     
     ax1.set_yticks(y_lbl_val)
     ax1.set_yticklabels(y_lbls)
-    marker = plot_symbols[count-1]
+    marker = 'o'
     
-    ax1.scatter(time[::point_spacing]-t_half,angle[::point_spacing],s=200,fc='none',edgecolor = color,label = 'Data',marker=marker) #data_loc[20]
-    ax1.plot(time-t_half,ang_sol,linewidth=lw, color=color,label='Model')
+    # ax1.scatter(time[::point_spacing]-t_half,angle[::point_spacing],s=200,fc='none',edgecolor = color,label = 'Data',marker=marker) #data_loc[20]
+    # ax1.plot(time-t_half,ang_sol,linewidth=lw, color=color,label='Model')
     
-#    ax1.scatter(time[::point_spacing],angle[::point_spacing],s=200,fc='none',edgecolor = color,label = 'Data',marker=marker) #data_loc[20]
-#    ax1.plot(time,ang_sol,linewidth=lw, color=color,label='Model')
+    ax1.scatter(time[::point_spacing],angle[::point_spacing],s=200,fc='none',edgecolor = color,label = 'Data',marker=marker) #data_loc[20]
+    ax1.plot(time,ang_sol,linewidth=lw, color=color,label='Model')
 #    ax1.set_ylim(0,3*np.pi/2)
     theta_sols.append(ang_sol)
     ax1.set_ylabel(r'$ \theta $',fontsize = 30,rotation=0,labelpad=25)
     
     
-    savepath = r'Z:\Tony Li\Binary Cropped'
+    savepath = r'Z:\Mingxuan Liu\Tracking Analysis'
     
-    data_dict = {'t':time-t_half,'x':x_data-x_data[idx_t_half],'y':y_data-y_data[idx_t_half],'theta':angle}
+    data_dict = {'t':time,'x':x_data,'y':y_data,'theta':angle}
     df = pd.DataFrame(data_dict)
-    print(savepath + '\Al+St 3D '+str(label_array[count-1])+'.csv')
-    df.to_csv(savepath + '\Al+St 3D '+str(label_array[count-1])+'.csv')
+    print(savepath + '\St+Cu 3D '+str(label_array[count-1])+'.csv')
+    df.to_csv(savepath + '\St+Cu 3D '+str(label_array[count-1])+'.csv')
     
-param_table_1st = pd.DataFrame(columns = ['a0','b0','b1','c0'])
-param_table_mac = pd.DataFrame(columns = ['a1','b0','c1'])
+plt.show()
 param_table_lf = pd.DataFrame(columns = ['c1','c1_err','c2','c2_err','c3','c3_err'])
 param_table_bf = pd.DataFrame(columns = ['at','bt','ar'])
 for n in range(len(label_array)):
@@ -388,10 +339,10 @@ for n in range(len(label_array)):
     row_arr_bf = np.array([c1-c2,c1+c2,4*c3/3])
     row_arr_lf = np.array([c1,c1_err,c2,c2_err,c3,c3_err])
     label = label_array[n]
-    param_table_bf.loc['3D Al+St '+str(label)] = row_arr_bf
-    param_table_lf.loc['3D Al+St '+str(label)] = row_arr_lf
+    param_table_bf.loc['3D Cu+St '+str(label)] = row_arr_bf
+    param_table_lf.loc['3D Cu+St '+str(label)] = row_arr_lf
 print(param_table_bf)
 print(param_table_lf)
-param_table_bf.to_csv(r'Z:\Tony Li\Binary Cropped\3D Al+St Param Table bf.csv')
-param_table_lf.to_csv(r'Z:\Tony Li\Binary Cropped\3D Al+St Param Table lf.csv')
+param_table_bf.to_csv(r'Z:\Mingxuan Liu\Tracking Analysis\3D Cu+St Param Table bf.csv')
+param_table_lf.to_csv(r'Z:\Mingxuan Liu\Tracking Analysis\3D Cu+St Param Table lf.csv')
 #param_table_1st.to_csv(r'F:\Sedimentation\Analysis\Al+Pl Param Table 1st order new.csv')
