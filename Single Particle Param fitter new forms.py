@@ -29,7 +29,7 @@ cu_density = 8920
 pl_density = 1420 
 ZrO2_density = 5680
 
-#The four terminal velocities needed for our sets of particles in (m/s)
+#The five terminal velocities needed for our sets of particles in (m/s)
 pl_term_vel = 0.00010080535530381048
 al_term_vel = 0.00040838516992790924
 st_term_vel = 0.0015376745623069
@@ -43,7 +43,7 @@ tau = r/v_light_term
 
 p_heavy = cu_density #Change this to your heaviest particle
 p_lighter = st_density #Change this to your lightest particle
-p_fluid = 971 #kg/m^3
+p_fluid = 971 # density of the medium in (kg/m^3); in this case the silicone oil
 
 K = (p_heavy - 2*p_fluid + p_lighter)/(-p_fluid + p_lighter)
 K2 = (p_heavy -p_lighter)/(p_lighter - p_fluid)
@@ -51,7 +51,7 @@ scales = [12.9,11.9,13.5,13.3,12.9]
 fps = 6
 colormap = cm.get_cmap('tab10')
 
-label_array=[27,28,29,30,31,32,33]
+label_array=[27,28,29,30,31,32,33] # the number label to each experiment
 ticksize = 22
 point_spacing = 1 #every nth point
 lgnd_font = 28
@@ -164,51 +164,53 @@ for data_loc in sorted(os.listdir(r'Z:\Mingxuan Liu\Particle Trajectories')):
     p0 = particle_data[particle_data['particle'] == 0]
     p1 = particle_data[particle_data['particle'] == 1]
     
-    m0 = 4/3 * np.pi * (.001)**3 * p_heavy
-    m1 = 4/3 * np.pi * (.001)**3 * p_lighter
+    m0 = 4/3 * np.pi * (.001)**3 * p_heavy  # mass of the heavy object
+    m1 = 4/3 * np.pi * (.001)**3 * p_lighter  # mass of the lighter object
     frames = np.copy(p0['frame'])
     
-    r_x = p1['x'].to_numpy() - p0['x'].to_numpy()
-    r_y = p1['y'].to_numpy() - p0['y'].to_numpy()
+    r_x = p1['x'].to_numpy() - p0['x'].to_numpy()  # horizontal distances between two objects
+    r_y = p1['y'].to_numpy() - p0['y'].to_numpy()  # vertical distances between two objects
 
+    # center of mass between two obejcts
     COM = np.array([(m0*p0['x'].to_numpy() + m1*p1['x'].to_numpy())/(m1+m0), (m0*p0['y'].to_numpy() + m1*p1['y'].to_numpy())/(m1+m0)])
     COM = COM/scale
+    # center of geometry between two objects
     center = np.array([p0['x'].to_numpy()/2 + p1['x'].to_numpy()/2, p0['y'].to_numpy()/2 + p1['y'].to_numpy()/2 ])
 
     cen_x = center[0]/scale
     cen_y = center[1]/scale
-    COM_x = COM[0]
-    COM_y = COM[1]
+    COM_x = COM[0]  # horizontal component of COM
+    COM_y = COM[1]  # vertical component of COM
     
     #We can choose to use either the COM frame or the center of geometry
 #    x_data = COM_x - COM_x[0]
 #    y_data = COM_y - COM_y[0]
     
-    x_data = cen_x - cen_x[0]
-    y_data = cen_y - cen_y[0]
+    x_data = cen_x - cen_x[0]  # set the initial horizontal position of the geometric center as reference
+    y_data = cen_y - cen_y[0]  # set the initial vertical position of the geometric center as reference
     
-    angle = np.arctan2(r_y/scale,r_x/scale) + np.pi/2
+    angle = np.arctan2(r_y/scale,r_x/scale) + np.pi/2  # retrun the angle value between -pi and pi
 #    angle = np.arctan(r_y/scale,r_x/scale) + np.pi/2
-    time = ((frames - frames[0])/fps)/tau
+    time = ((frames - frames[0])/fps)/tau  # calculate the scaled time with tau as the time scale
     
     
 
     
-    #Calculating the time where angle = pi/2
-    #Finds the closest point to pi/2, creates a line from the points close by, then solve for t_half knowing we want pi/2
-    # idx_half_close = (np.abs(angle - np.pi/2)).argmin()
+    # Calculating the time where angle = pi/2
+    # Finds the closest point to pi/2, creates a line from the points close by, then solve for t_half knowing we want pi/2
+    idx_half_close = (np.abs(angle - np.pi/2)).argmin()
     
-    # line_fit_points_idx = idx_half_close + np.array([-2,-1,0,1,2])
+    line_fit_points_idx = idx_half_close + np.array([-2,-1,0,1,2])
     
-    # line_fit_points = angle[line_fit_points_idx]
-    # time_half_fit = time[line_fit_points_idx]
+    line_fit_points = angle[line_fit_points_idx]
+    time_half_fit = time[line_fit_points_idx]
 
-    # def line(t,M,B):
-    #     return M*t + B
-    # t_h_popt,t_h_pcov = spo.curve_fit(line,time_half_fit,line_fit_points)
+    def line(t,M,B):
+        return M*t + B
+    t_h_popt,t_h_pcov = spo.curve_fit(line,time_half_fit,line_fit_points)
     
-    # t_half = (np.pi/2 - t_h_popt[1])/t_h_popt[0]
-    # t_half_arr.append(t_half)
+    t_half = (np.pi/2 - t_h_popt[1])/t_h_popt[0]
+    t_half_arr.append(t_half)
     
     #Fitting c3
 #    c_init = initial_guesses[0]
@@ -218,7 +220,7 @@ for data_loc in sorted(os.listdir(r'Z:\Mingxuan Liu\Particle Trajectories')):
     pcov_ang = theta_fit[1]
     c3_err = np.sqrt(np.diag(pcov_ang))[1]
     c3_errs.append(c3_err)
-    theta_0 = popt_ang[0]
+    theta_0 = popt_ang[0]  # best-fit initial angle
     theta_0_arr.append(popt_ang[0])
     c3 = popt_ang[1]
     c3_arr.append(c3)
@@ -266,16 +268,16 @@ for data_loc in sorted(os.listdir(r'Z:\Mingxuan Liu\Particle Trajectories')):
     y_solution = y_sol_2(time,theta_0,y_0,c1,c2,c3)
     
     marker = 'o'
-    # idx_t_half = (np.abs(time-t_half)).argmin()
+    idx_t_half = (np.abs(time-t_half)).argmin()
     
 
     
-    #Plotting y vs. t and inset
-    # ax2.scatter(time[::point_spacing]-t_half,-y_data[::point_spacing] + y_data[idx_t_half],s=200,fc = 'none',edgecolor=color,label = 'Data',marker=marker)
-    # ax2.plot(time-t_half,y_solution - y_solution[idx_t_half],linewidth=lw,color=color,label='Model')
+    # Plotting y vs. t and inset
+    ax2.scatter(time[::point_spacing]-t_half,-y_data[::point_spacing] + y_data[idx_t_half],s=200,fc = 'none',edgecolor=color,label = 'Data',marker=marker)
+    ax2.plot(time-t_half,y_solution - y_solution[idx_t_half],linewidth=lw,color=color,label='Model')
     
-    ax2.scatter(time[::point_spacing],-y_data[::point_spacing],s=200,fc = 'none',edgecolor=color,label = 'Data',marker=marker)
-    ax2.plot(time,y_solution,linewidth=lw,color=color,label='Model')
+    # ax2.scatter(time[::point_spacing],-y_data[::point_spacing],s=200,fc = 'none',edgecolor=color,label = 'Data',marker=marker)
+    # ax2.plot(time,y_solution,linewidth=lw,color=color,label='Model')
     
     #plt.xlabel('time (scaled)',fontsize = 48)
     ax2.set_ylabel('y/R',fontsize = 30)
@@ -283,18 +285,18 @@ for data_loc in sorted(os.listdir(r'Z:\Mingxuan Liu\Particle Trajectories')):
     ip = InsetPosition(ax2, [.68,.6,.3,.35])
     ax5.set_axes_locator(ip)
     ax5.axhline(y=0,linestyle=":",color='k',linewidth=1)
-    ax5.plot(time,y_data + y_solution,linewidth=lw-1.75,color=color) #Put back t-t_half
+    ax5.plot(time-t_half,y_data + y_solution,linewidth=lw-1.75,color=color) #Put back t-t_half
     ax5.set_ylabel('y - y$_{m}$',labelpad=3,fontsize=20)
     ax5.set_xlabel(r't/$\tau $',labelpad=-1.5,fontsize=20)
     ax5.set_ylim(-.5,.5)
 #    ax5.set_xlim(time[0]-2-t_half,time[-1]+2-t_half)
     
-    #Plotting x vs. t
-    # ax3.scatter(time[::point_spacing]-t_half,x_data[::point_spacing] - x_data[idx_t_half],s=200,fc = 'none',edgecolor=color,label = 'Data',marker=marker)
-    # ax3.plot(time-t_half,x_solution - x_solution[idx_t_half],linewidth=lw,color=color,label='Model')
+    # Plotting x vs. t
+    ax3.scatter(time[::point_spacing]-t_half,x_data[::point_spacing] - x_data[idx_t_half],s=200,fc = 'none',edgecolor=color,label = 'Data',marker=marker)
+    ax3.plot(time-t_half,x_solution - x_solution[idx_t_half],linewidth=lw,color=color,label='Model')
     
-    ax3.scatter(time[::point_spacing],x_data[::point_spacing],s=200,fc = 'none',edgecolor=color,label = 'Data',marker=marker)
-    ax3.plot(time,x_solution,linewidth=lw,color=color,label='Model')
+    # ax3.scatter(time[::point_spacing],x_data[::point_spacing],s=200,fc = 'none',edgecolor=color,label = 'Data',marker=marker)
+    # ax3.plot(time,x_solution,linewidth=lw,color=color,label='Model')
     
     ax3.set_xlabel(r't/$\tau $',fontsize = 30)
     ax3.set_ylabel('x/R',fontsize = 30,labelpad=-5)
@@ -307,11 +309,11 @@ for data_loc in sorted(os.listdir(r'Z:\Mingxuan Liu\Particle Trajectories')):
     ax1.set_yticklabels(y_lbls)
     marker = 'o'
     
-    # ax1.scatter(time[::point_spacing]-t_half,angle[::point_spacing],s=200,fc='none',edgecolor = color,label = 'Data',marker=marker) #data_loc[20]
-    # ax1.plot(time-t_half,ang_sol,linewidth=lw, color=color,label='Model')
+    ax1.scatter(time[::point_spacing]-t_half,angle[::point_spacing],s=200,fc='none',edgecolor = color,label = 'Data',marker=marker) #data_loc[20]
+    ax1.plot(time-t_half,ang_sol,linewidth=lw, color=color,label='Model')
     
-    ax1.scatter(time[::point_spacing],angle[::point_spacing],s=200,fc='none',edgecolor = color,label = 'Data',marker=marker) #data_loc[20]
-    ax1.plot(time,ang_sol,linewidth=lw, color=color,label='Model')
+    # ax1.scatter(time[::point_spacing],angle[::point_spacing],s=200,fc='none',edgecolor = color,label = 'Data',marker=marker) #data_loc[20]
+    # ax1.plot(time,ang_sol,linewidth=lw, color=color,label='Model')
 #    ax1.set_ylim(0,3*np.pi/2)
     theta_sols.append(ang_sol)
     ax1.set_ylabel(r'$ \theta $',fontsize = 30,rotation=0,labelpad=25)
