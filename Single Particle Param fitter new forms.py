@@ -298,11 +298,11 @@ for data_loc in sorted(os.listdir(data_path)):
     ax3.set_ylabel('x/R',fontsize = 30,labelpad=-5)
 
     # Plotting v_y vs. t
-    ax4.scatter(time[::point_spacing]-t_half,np.gradient(-y_data[::point_spacing] + y_data[idx_t_half]),s=200,fc = 'none',edgecolor=color,label = 'Data',marker=marker)
-    ax4.plot(time-t_half,np.gradient(y_solution - y_solution[idx_t_half]),linewidth=lw,color=color,label='Model')
+    ax4.scatter(time[::point_spacing]-t_half,abs(np.gradient(-y_data[::point_spacing])),s=200,fc = 'none',edgecolor=color,label = 'Data',marker=marker)
+    ax4.plot(time-t_half,abs(np.gradient(y_solution)),linewidth=lw,color=color,label='Model')
     
     ax4.set_xlabel(r't/$\tau $',fontsize = 30)
-    ax4.set_ylabel('dy/dt',fontsize = 30,labelpad=-5)
+    ax4.set_ylabel('$|V_y|$',fontsize = 30,labelpad=-5)
     
     #Plotting theta vs time
     y_lbls = ['$\pi$','$\pi/2$','0']
@@ -326,6 +326,9 @@ for data_loc in sorted(os.listdir(data_path)):
     df = pd.DataFrame(data_dict)
     print(save_path + save_name + str(label_array[count-1])+'.csv')
     df.to_csv(os.path.join(save_path, save_name + ' ' + str(label_array[count-1])+'.csv'))
+
+
+    fig.suptitle(save_name, fontsize=30, y=0.96)
 plt.savefig(os.path.join(save_path, save_name))    
 plt.show()
 
