@@ -17,33 +17,22 @@ import matplotlib.cm as cm
 import os
 from collections import OrderedDict
 from mpl_toolkits.axes_grid.inset_locator import (inset_axes, InsetPosition, mark_inset)
+from records import DENSITIES, TERMINAL_VELOCITIES, FLUID_DENSITY, RADIUS
 
 mpl.rcParams['mathtext.fontset'] = 'stix'
 mpl.rcParams['font.family'] = 'STIXGeneral'
-mpl.rc('figure', figsize=(9, 11))
+mpl.rc('figure', figsize=(9, 15))
 
-#Densities needed for our sets of particles in (kg/m^3)
-al_density = 2790 
-st_density = 7820 
-cu_density = 8920 
-pl_density = 1420 
-ZrO2_density = 5680
 
-#The five terminal velocities needed for our sets of particles in (m/s)
-pl_term_vel = 0.00010080535530381048
-al_term_vel = 0.00040838516992790924
-st_term_vel = 0.0015376745623069
-ZrO2_term_vel = 0.0010572214212152416
-al_term_vel_3D = 0.000776
+v_light_term = TERMINAL_VELOCITIES['st'] #Change this to your lightest particle
 
-v_light_term = st_term_vel #Change this to your lightest particle
+r = RADIUS
+tau = r/v_light_term  # time scale of the sedimentation problem
 
-r = .001 #m
-tau = r/v_light_term
-
-p_heavy = cu_density #Change this to your heaviest particle
-p_lighter = st_density #Change this to your lightest particle
-p_fluid = 971 # density of the medium in (kg/m^3); in this case the silicone oil
+# Define the densities involved in the problem
+p_heavy = DENSITIES['cu'] #Change this to your heaviest particle
+p_lighter = DENSITIES['st'] #Change this to your lightest particle
+p_fluid = FLUID_DENSITY # density of the medium; in this case the silicone oil
 
 K = (p_heavy - 2*p_fluid + p_lighter)/(-p_fluid + p_lighter)
 K2 = (p_heavy -p_lighter)/(p_lighter - p_fluid)
@@ -52,6 +41,11 @@ fps = 6
 colormap = cm.get_cmap('tab10')
 
 label_array=[27,28,29,30,31,32,33] # the number label to each experiment
+root_path = r'Z:\Mingxuan Liu'
+data_path = os.path.join(root_path, 'Particle Trajectories')
+save_path = os.path.join(root_path, 'Tracking Analysis')
+save_name = 'St+Cu' + ' 3D'
+
 ticksize = 22
 point_spacing = 1 #every nth point
 lgnd_font = 28
@@ -131,26 +125,28 @@ initial_guesses = [.06,.067,.15,.001]
 #at,bt,ar
 initial_guesses_mac = [.23,.258,.267]
 
-fig, ax = plt.subplots(3,1,sharex='all')
+fig, ax = plt.subplots(4,1,sharex='all')
 
 ax1 = ax[0]
 ax2 = ax[1]
 ax3 = ax[2]
+ax4 = ax[3]
 
 ax1.tick_params(direction = 'in',length = 8, width = 1.75,labelsize=20)
 ax2.tick_params(direction = 'in',length = 8, width = 1.75,labelsize=20)
 ax3.tick_params(direction = 'in',length = 8, width = 1.75,labelsize=20)
+ax4.tick_params(direction = 'in',length = 8, width = 1.75,labelsize=20)
 ax5 = plt.axes([0,0,1,1])
 t_half_arr = []
 
 fig.subplots_adjust(hspace=0)
 
-for data_loc in sorted(os.listdir(r'Z:\Mingxuan Liu\Particle Trajectories')):
+for data_loc in sorted(os.listdir(data_path)):
     #Reading in data and setting up counter
     count+=1
     print(data_loc)
     color = colormap(count-1)
-    file_loc = os.path.join(r'Z:\Mingxuan Liu\Particle Trajectories',data_loc)
+    file_loc = os.path.join(data_path, data_loc)
     particle_data = pd.read_csv(file_loc)
     
     #scale = scales[count-1] #scales array determined through imagej
@@ -300,6 +296,13 @@ for data_loc in sorted(os.listdir(r'Z:\Mingxuan Liu\Particle Trajectories')):
     
     ax3.set_xlabel(r't/$\tau $',fontsize = 30)
     ax3.set_ylabel('x/R',fontsize = 30,labelpad=-5)
+
+    # Plotting v_y vs. t
+    ax4.scatter(time[::point_spacing]-t_half,np.gradient(-y_data[::point_spacing] + y_data[idx_t_half]),s=200,fc = 'none',edgecolor=color,label = 'Data',marker=marker)
+    ax4.plot(time-t_half,np.gradient(y_solution - y_solution[idx_t_half]),linewidth=lw,color=color,label='Model')
+    
+    ax4.set_xlabel(r't/$\tau $',fontsize = 30)
+    ax4.set_ylabel('dy/dt',fontsize = 30,labelpad=-5)
     
     #Plotting theta vs time
     y_lbls = ['$\pi$','$\pi/2$','0']
@@ -319,14 +322,13 @@ for data_loc in sorted(os.listdir(r'Z:\Mingxuan Liu\Particle Trajectories')):
     ax1.set_ylabel(r'$ \theta $',fontsize = 30,rotation=0,labelpad=25)
     
     
-    savepath = r'Z:\Mingxuan Liu\Tracking Analysis'
-    
     data_dict = {'t':time,'x':x_data,'y':y_data,'theta':angle}
     df = pd.DataFrame(data_dict)
-    print(savepath + '\St+Cu 3D '+str(label_array[count-1])+'.csv')
-    df.to_csv(savepath + '\St+Cu 3D '+str(label_array[count-1])+'.csv')
-    
+    print(save_path + save_name + str(label_array[count-1])+'.csv')
+    df.to_csv(os.path.join(save_path, save_name + ' ' + str(label_array[count-1])+'.csv'))
+plt.savefig(os.path.join(save_path, save_name))    
 plt.show()
+
 param_table_lf = pd.DataFrame(columns = ['c1','c1_err','c2','c2_err','c3','c3_err'])
 param_table_bf = pd.DataFrame(columns = ['at','bt','ar'])
 for n in range(len(label_array)):
@@ -345,6 +347,6 @@ for n in range(len(label_array)):
     param_table_lf.loc['3D Cu+St '+str(label)] = row_arr_lf
 print(param_table_bf)
 print(param_table_lf)
-param_table_bf.to_csv(r'Z:\Mingxuan Liu\Tracking Analysis\3D Cu+St Param Table bf.csv')
-param_table_lf.to_csv(r'Z:\Mingxuan Liu\Tracking Analysis\3D Cu+St Param Table lf.csv')
+param_table_bf.to_csv(os.path.join(save_path, save_name +' Param Table bf.csv'))
+param_table_lf.to_csv(os.path.join(save_path, save_name +' Param Table lf.csv'))
 #param_table_1st.to_csv(r'F:\Sedimentation\Analysis\Al+Pl Param Table 1st order new.csv')
