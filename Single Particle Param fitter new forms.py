@@ -40,7 +40,7 @@ scales = [12.9,11.9,13.5,13.3,12.9]
 fps = 6
 colormap = cm.get_cmap('tab10')
 
-label_array=[27,28,29,30,31,32,33] # the number label to each experiment
+label_array=[28,29,30,31,32,33] # the number label to each experiment
 root_path = r'Z:\Mingxuan Liu'
 data_path = os.path.join(root_path, 'Particle Trajectories')
 save_path = os.path.join(root_path, 'Tracking Analysis')
@@ -123,7 +123,7 @@ count = 0
 initial_guesses = [.06,.067,.15,.001]
 
 #at,bt,ar
-initial_guesses_mac = [.23,.258,.267]
+initial_guesses_mac = [.25,.258,.267]
 
 fig, ax = plt.subplots(4,1,sharex='all')
 
@@ -324,7 +324,7 @@ for data_loc in sorted(os.listdir(data_path)):
     
     data_dict = {'t':time,'x':x_data,'y':y_data,'theta':angle}
     df = pd.DataFrame(data_dict)
-    print(save_path + save_name + str(label_array[count-1])+'.csv')
+    print(save_path + '\\' + save_name + ' ' + str(label_array[count-1])+'.csv')
     df.to_csv(os.path.join(save_path, save_name + ' ' + str(label_array[count-1])+'.csv'))
 
 
