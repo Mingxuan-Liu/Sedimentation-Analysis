@@ -23,15 +23,16 @@ mpl.rcParams['mathtext.fontset'] = 'stix'
 mpl.rcParams['font.family'] = 'STIXGeneral'
 mpl.rc('figure', figsize=(9, 15))
 
-
-v_light_term = TERMINAL_VELOCITIES['st'] #Change this to your lightest particle
+name_light = 'st'  # name of the lightest particle
+name_heavy = 'cu'  # name of the heaviest particle
+v_light_term = TERMINAL_VELOCITIES[name_light] # terminal velocity of the lightest particle
 
 r = RADIUS
-tau = r/v_light_term  # time scale of the sedimentation problem
+tau = r/v_light_term  # time scale of the sedimentation process
 
 # Define the densities involved in the problem
-p_heavy = DENSITIES['cu'] #Change this to your heaviest particle
-p_lighter = DENSITIES['st'] #Change this to your lightest particle
+p_heavy = DENSITIES[name_heavy] # density of the heaviest particle
+p_lighter = DENSITIES[name_light] # density of the lightest particle
 p_fluid = FLUID_DENSITY # density of the medium; in this case the silicone oil
 
 K = (p_heavy - 2*p_fluid + p_lighter)/(-p_fluid + p_lighter)
@@ -42,7 +43,7 @@ colormap = cm.get_cmap('tab10')
 
 label_array=[28,29,30,31,32,33] # the number label to each experiment
 root_path = r'Z:\Mingxuan Liu'
-data_path = os.path.join(root_path, 'Particle Trajectories')
+data_path = os.path.join(root_path, 'Particle Trajectories', '1Steel&1Cu_CopperUp_6fps')
 save_path = os.path.join(root_path, 'Tracking Analysis')
 save_name = 'St+Cu' + ' 3D'
 
@@ -322,7 +323,7 @@ for data_loc in sorted(os.listdir(data_path)):
     ax1.set_ylabel(r'$ \theta $',fontsize = 30,rotation=0,labelpad=25)
     
     
-    data_dict = {'t':time,'x':x_data,'y':y_data,'theta':angle}
+    data_dict = {'t':time-t_half,'x':x_data-x_data[idx_t_half],'y':y_data-y_data[idx_t_half],'theta':angle}
     df = pd.DataFrame(data_dict)
     print(save_path + '\\' + save_name + ' ' + str(label_array[count-1])+'.csv')
     df.to_csv(os.path.join(save_path, save_name + ' ' + str(label_array[count-1])+'.csv'))
@@ -346,10 +347,10 @@ for n in range(len(label_array)):
     row_arr_bf = np.array([c1-c2,c1+c2,4*c3/3])
     row_arr_lf = np.array([c1,c1_err,c2,c2_err,c3,c3_err])
     label = label_array[n]
-    param_table_bf.loc['3D Cu+St '+str(label)] = row_arr_bf
-    param_table_lf.loc['3D Cu+St '+str(label)] = row_arr_lf
+    param_table_bf.loc[save_name + ' ' + str(label)] = row_arr_bf
+    param_table_lf.loc[save_name + ' ' + str(label)] = row_arr_lf
 print(param_table_bf)
 print(param_table_lf)
-param_table_bf.to_csv(os.path.join(save_path, save_name +' Param Table bf.csv'))
-param_table_lf.to_csv(os.path.join(save_path, save_name +' Param Table lf.csv'))
+param_table_bf.to_csv(os.path.join(save_path, save_name + ' Param Table bf.csv'))
+param_table_lf.to_csv(os.path.join(save_path, save_name + ' Param Table lf.csv'))
 #param_table_1st.to_csv(r'F:\Sedimentation\Analysis\Al+Pl Param Table 1st order new.csv')

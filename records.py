@@ -16,5 +16,5 @@ TERMINAL_VELOCITIES = {
     'al_3D': 0.000776
 }
 
-FLUID_DENSITY = 971 # density of the medium in (kg/m^3); in this case the silicone oil
-RADIUS = 0.001 #m
+FLUID_DENSITY = 971  # density of the medium in (kg/m^3); in this case the silicone oil
+RADIUS = 0.001  # m
