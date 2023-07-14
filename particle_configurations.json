@@ -1,11 +1,29 @@
 {
     "dimer-st-al": [
-        {"center": [0, 0, 0], "radius": 1, "color": "b", "material": "al"},
-        {"center": [0, 0, 2], "radius": 1, "color": "r", "material": "st"}
+        {"center": [0, 0, 0], "radius": 1, "color": "silver", "material": "al"},
+        {"center": [0, 0, 2], "radius": 1, "color": "grey", "material": "st"}
     ],
-    "particle2": [
-        {"center": [0, 0, 0], "radius": 1, "color": "g", "material": "cu"},
-        {"center": [2, 0, 0], "radius": 1, "color": "y", "material": "pl"},
-        {"center": [4, 0, 0], "radius": 1, "color": "b", "material": "ZrO2"}
+    "dimer-st-cu": [
+        {"center": [0, 0, 0], "radius": 1, "color": "grey", "material": "st"},
+        {"center": [0, 0, 2], "radius": 1, "color": "orange", "material": "cu"}
+    ],
+    "dimer-al-cu": [
+        {"center": [0, 0, 0], "radius": 1, "color": "silver", "material": "al"},
+        {"center": [0, 0, 2], "radius": 1, "color": "orange", "material": "cu"}
+    ],
+    "tetramer-al-cu": [
+        {"center": [0, 0, 0], "radius": 1, "color": "silver", "material": "al"},
+        {"center": [1, 1.732051, 0], "radius": 1, "color": "silver", "material": "al"},
+        {"center": [2, 0, 0], "radius": 1, "color": "orange", "material": "cu"},
+        {"center": [1, 1.732051, 2], "radius": 1, "color": "silver", "material": "al"}
+    ],
+    "pentamer-al-cu": [
+        {"center": [0, -1, 0], "radius": 1, "color": "silver", "material": "al"},
+        {"center": [0, 1, 0], "radius": 1, "color": "silver", "material": "al"},
+        {"center": [1.732051, 0, 0], "radius": 1, "color": "silver", "material": "al"},
+        {"center": [3.464102, 0, 1], "radius": 1, "color": "silver", "material": "al"},
+        {"center": [3.464102, 0, -1], "radius": 1, "color": "orange", "material": "cu"}
     ]
 }
+
+

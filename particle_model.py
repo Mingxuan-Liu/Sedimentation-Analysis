@@ -31,8 +31,8 @@ class Sphere:
 
     def mass(self):
         # Calculate the mass based on volume and density (mass = density * volume)
-        volume = 4 / 3 * np.pi * (self.radius ** 3)  # Volume of sphere
-        return self.density * volume
+        volume = (4 / 3) * np.pi * (self.radius ** 3)  # Volume of sphere
+        return (self.density * (10 ** -9)) * volume
 
 
 class Particle:
