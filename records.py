@@ -9,11 +9,11 @@ DENSITIES = {
 
 # The five terminal velocities needed for our sets of particles in (m/s)
 TERMINAL_VELOCITIES = {
-    'pl': 0.00010080535530381048,
-    'al': 0.00040838516992790924,
-    'st': 0.0015376745623069,
-    'ZrO2': 0.0010572214212152416,
-    'al_3D': 0.000776
+    'al': 0.0008167703398558185,
+    'st': 0.0030753491246138,
+    'cu': 0.0035656345119578895,
+    'pl': 0.00020161071060762097,
+    'ZrO2': 0.0021144428424304832
 }
 
 FLUID_DENSITY = 971  # density of the medium in (kg/m^3); in this case the silicone oil
