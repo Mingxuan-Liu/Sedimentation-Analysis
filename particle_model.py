@@ -39,6 +39,7 @@ class Sphere:
 class Particle:
     def __init__(self):
         self.spheres = []
+        # initialize the center of mass and center of geometry as none
         self._center_of_mass = None
         self._center_of_geometry = None
 
@@ -47,21 +48,26 @@ class Particle:
             if s.is_overlap(sphere):
                 raise ValueError("Overlapping spheres are not allowed.")
         self.spheres.append(sphere)
+        # invalidate the cache and recalculate it when needed
         self._center_of_mass = None
         self._center_of_geometry = None
 
     @property
     def center_of_mass(self):
+        # if COM does not exist, calculate one
         if self._center_of_mass is None:
             total_mass = sum([s.mass() for s in self.spheres])
             weighted_positions = sum([s.center * s.mass() for s in self.spheres])
             self._center_of_mass = weighted_positions / total_mass
+        # if already existed, then read from the cache
         return self._center_of_mass
 
     @property
     def center_of_geometry(self):
+        # if COG does not exist, calculate one
         if self._center_of_geometry is None:
             self._center_of_geometry = sum([s.center for s in self.spheres]) / len(self.spheres)
+        # if already existed, then read from the cache
         return self._center_of_geometry
 
     def to_numerical_array(self):
@@ -79,9 +85,15 @@ class Particle:
 
         for s in self.spheres:
             s.center = rotation.apply(s.center - self.center_of_mass) + self.center_of_mass
+        # invalidate the cache and recalculate it when needed
+        self._center_of_mass = None
+        self._center_of_geometry = None
 
     def scale(self, factor):
         # scaling is done with respect to the center of mass
         for s in self.spheres:
             s.center = self.center_of_mass + factor * (s.center - self.center_of_mass)
             s.radius = s.radius * factor
+        # invalidate the cache and recalculate it when needed
+        self._center_of_mass = None
+        self._center_of_geometry = None
