@@ -1,6 +1,7 @@
 """
 This program builds a numerical model for a 3-D particle composed of multiple spheres, each of which cannot overlap
-and must be connected to at least one another sphere.
+and must be connected to at least one another sphere. Basic operations can be performed on the model: rotation, scaling,
+and flipping.
 
 @author: Mingxuan Liu
 @date: Jul 13, 2023
@@ -79,6 +80,12 @@ class Particle:
         return np.array(arr)
 
     def rotate(self, angle):
+        """
+        This function rotates the particle object by the axis (currently the vector from COG to COM).
+
+        :param angle: The angle interval that this object is going to be rotated by (currently in degree)
+        :return: A rotated particle object and updated rotation angle theta
+        """
         # define the rotation axis from center of mass to center of geometry
         axis = self.center_of_geometry - self.center_of_mass
         axis = axis / np.linalg.norm(axis)  # normalize the axis
