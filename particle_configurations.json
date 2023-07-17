@@ -17,6 +17,12 @@
         {"center": [2, 0, 0], "radius": 1, "color": "orange", "material": "cu"},
         {"center": [1, 1.732051, 2], "radius": 1, "color": "silver", "material": "al"}
     ],
+    "tetramer-pl-cu": [
+        {"center": [0, 0, 0], "radius": 1, "color": "white", "material": "pl"},
+        {"center": [1, 1.732051, 0], "radius": 1, "color": "white", "material": "pl"},
+        {"center": [2, 0, 0], "radius": 1, "color": "orange", "material": "cu"},
+        {"center": [1, 1.732051, 2], "radius": 1, "color": "white", "material": "pl"}
+    ],
     "pentamer-al-cu": [
         {"center": [0, -1, 0], "radius": 1, "color": "silver", "material": "al"},
         {"center": [0, 1, 0], "radius": 1, "color": "silver", "material": "al"},

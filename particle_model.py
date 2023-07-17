@@ -7,6 +7,7 @@ and must be connected to at least one another sphere.
 """
 
 import numpy as np
+from scipy.spatial.transform import Rotation as R
 from records import DENSITIES  # Import the DENSITIES dictionary
 
 
@@ -38,21 +39,30 @@ class Sphere:
 class Particle:
     def __init__(self):
         self.spheres = []
+        self._center_of_mass = None
+        self._center_of_geometry = None
 
     def add_sphere(self, sphere):
-        # Ensure new sphere doesn't overlap existing ones
         for s in self.spheres:
             if s.is_overlap(sphere):
                 raise ValueError("Overlapping spheres are not allowed.")
         self.spheres.append(sphere)
+        self._center_of_mass = None
+        self._center_of_geometry = None
 
+    @property
     def center_of_mass(self):
-        total_mass = sum([s.mass() for s in self.spheres])
-        weighted_positions = sum([s.center * s.mass() for s in self.spheres])
-        return weighted_positions / total_mass
+        if self._center_of_mass is None:
+            total_mass = sum([s.mass() for s in self.spheres])
+            weighted_positions = sum([s.center * s.mass() for s in self.spheres])
+            self._center_of_mass = weighted_positions / total_mass
+        return self._center_of_mass
 
+    @property
     def center_of_geometry(self):
-        return sum([s.center for s in self.spheres]) / len(self.spheres)
+        if self._center_of_geometry is None:
+            self._center_of_geometry = sum([s.center for s in self.spheres]) / len(self.spheres)
+        return self._center_of_geometry
 
     def to_numerical_array(self):
         arr = []
@@ -60,9 +70,18 @@ class Particle:
             arr.append([*sphere.center, sphere.radius])
         return np.array(arr)
 
-    # Placeholder for future methods
-    def rotate(self, axis, angle):
-        pass
+    def rotate(self, angle):
+        # define the rotation axis from center of mass to center of geometry
+        axis = self.center_of_geometry - self.center_of_mass
+        axis = axis / np.linalg.norm(axis)  # normalize the axis
+
+        rotation = R.from_rotvec(axis * np.deg2rad(angle))  # create a rotation vector
+
+        for s in self.spheres:
+            s.center = rotation.apply(s.center - self.center_of_mass) + self.center_of_mass
 
     def scale(self, factor):
-        pass
+        # scaling is done with respect to the center of mass
+        for s in self.spheres:
+            s.center = self.center_of_mass + factor * (s.center - self.center_of_mass)
+            s.radius = s.radius * factor
