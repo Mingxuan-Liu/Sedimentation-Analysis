@@ -42,6 +42,8 @@ class Particle:
         # initialize the center of mass and center of geometry as none
         self._center_of_mass = None
         self._center_of_geometry = None
+        # initialize rotation angle
+        self.theta = 0
 
     def add_sphere(self, sphere):
         for s in self.spheres:
@@ -88,6 +90,8 @@ class Particle:
         # invalidate the cache and recalculate it when needed
         self._center_of_mass = None
         self._center_of_geometry = None
+        # update rotation angle
+        self.theta += angle
 
     def scale(self, factor):
         # scaling is done with respect to the center of mass
@@ -97,3 +101,4 @@ class Particle:
         # invalidate the cache and recalculate it when needed
         self._center_of_mass = None
         self._center_of_geometry = None
+
