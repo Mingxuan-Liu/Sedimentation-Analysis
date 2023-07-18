@@ -44,7 +44,8 @@ class Particle:
         self._center_of_mass = None
         self._center_of_geometry = None
         # initialize rotation angle
-        self.theta = 0
+        self.theta = 0  # azimuth angle
+        self.phi = 0  # polar angle
 
     def add_sphere(self, sphere):
         for s in self.spheres:
@@ -79,26 +80,28 @@ class Particle:
             arr.append([*sphere.center, sphere.radius])
         return np.array(arr)
 
-    def rotate(self, angle):
+    def rotate(self, theta, phi):
         """
-        This function rotates the particle object by the axis (currently the vector from COG to COM).
+        This function rotates the particle object by the azimuthal and polar angles theta and phi.
 
-        :param angle: The angle interval that this object is going to be rotated by (currently in degree)
-        :return: A rotated particle object and updated rotation angle theta
+        :param theta: Azimuthal angle for rotation (in degrees)
+        :param phi: Polar angle for rotation (in degrees)
+        :return: A rotated particle object and updated rotation angles theta and phi
         """
         # define the rotation axis from center of mass to center of geometry
         axis = self.center_of_geometry - self.center_of_mass
         axis = axis / np.linalg.norm(axis)  # normalize the axis
 
-        rotation = R.from_rotvec(axis * np.deg2rad(angle))  # create a rotation vector
+        rotation_azimuth = R.from_rotvec(axis * np.deg2rad(theta))  # create a rotation vector from polar angle
 
         for s in self.spheres:
-            s.center = rotation.apply(s.center - self.center_of_mass) + self.center_of_mass
+            s.center = rotation_azimuth.apply(s.center - self.center_of_mass) + self.center_of_mass
         # invalidate the cache and recalculate it when needed
         self._center_of_mass = None
         self._center_of_geometry = None
-        # update rotation angle
-        self.theta += angle
+        # update rotation angles
+        self.theta += theta
+        self.phi += phi
 
     def scale(self, factor):
         # scaling is done with respect to the center of mass
