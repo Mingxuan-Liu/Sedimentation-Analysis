@@ -23,8 +23,8 @@ mpl.rcParams['mathtext.fontset'] = 'stix'
 mpl.rcParams['font.family'] = 'STIXGeneral'
 mpl.rc('figure', figsize=(9, 15))
 
-name_light = 'st'  # name of the lightest particle
-name_heavy = 'cu'  # name of the heaviest particle
+name_light = 'ZrO2'  # name of the lightest particle
+name_heavy = 'st'  # name of the heaviest particle
 v_light_term = TERMINAL_VELOCITIES[name_light] # terminal velocity of the lightest particle
 
 r = RADIUS
@@ -41,11 +41,11 @@ scales = [12.9,11.9,13.5,13.3,12.9]
 fps = 6
 colormap = cm.get_cmap('tab10')
 
-label_array=[28,29,30,31,32,33] # the number label to each experiment
+label_array=[1] # the number label to each experiment
 root_path = r'Z:\Mingxuan Liu'
-data_path = os.path.join(root_path, 'Particle Trajectories', '1Steel&1Cu_CopperUp_6fps')
+data_path = os.path.join(root_path, 'Particle Trajectories', 'dimer-st-zro2-6fps')
 save_path = os.path.join(root_path, 'Tracking Analysis')
-save_name = 'St+Cu' + ' 3D'
+save_name = 'St+ZrO2' + ' 3D'
 
 ticksize = 22
 point_spacing = 1 #every nth point

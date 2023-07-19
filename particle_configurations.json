@@ -11,6 +11,10 @@
         {"center": [0, 0, 0], "radius": 1, "color": "silver", "material": "al"},
         {"center": [0, 0, 2], "radius": 1, "color": "orange", "material": "cu"}
     ],
+    "dimer-cro2-st": [
+        {"center": [0, 0, 0], "radius": 1, "color": "white", "material": "ZrO2"},
+        {"center": [0, 0, 2], "radius": 1, "color": "orange", "material": "cu"}
+    ],
     "tetramer-al-cu": [
         {"center": [0, 0, 0], "radius": 1, "color": "silver", "material": "al"},
         {"center": [1, 1.732051, 0], "radius": 1, "color": "silver", "material": "al"},
@@ -22,6 +26,18 @@
         {"center": [1, 1.732051, 0], "radius": 1, "color": "white", "material": "pl"},
         {"center": [2, 0, 0], "radius": 1, "color": "orange", "material": "cu"},
         {"center": [1, 1.732051, 2], "radius": 1, "color": "white", "material": "pl"}
+    ],
+    "tetramer-cu": [
+        {"center": [0, 0, 0], "radius": 1, "color": "orange", "material": "cu"},
+        {"center": [2, 0, 0], "radius": 1, "color": "orange", "material": "cu"},
+        {"center": [4, 0, 0], "radius": 1, "color": "orange", "material": "cu"},
+        {"center": [4, 2, 0], "radius": 1, "color": "orange", "material": "cu"}
+    ],
+    "tetramer-pl-cu-2": [
+        {"center": [0, 0, 0], "radius": 1, "color": "white", "material": "pl"},
+        {"center": [2, 0, 0], "radius": 1, "color": "white", "material": "pl"},
+        {"center": [4, 0, 0], "radius": 1, "color": "white", "material": "pl"},
+        {"center": [4, 2, 0], "radius": 1, "color": "orange", "material": "cu"}
     ],
     "pentamer-al-cu": [
         {"center": [0, -1, 0], "radius": 1, "color": "silver", "material": "al"},
