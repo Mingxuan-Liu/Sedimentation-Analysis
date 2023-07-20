@@ -40,21 +40,36 @@ class Sphere:
 class Particle:
     def __init__(self):
         self.spheres = []
-        # initialize the center of mass and center of geometry as none
+        # initialize the center of mass, center of geometry, and the offset 'chi' as none
         self._center_of_mass = None
         self._center_of_geometry = None
-        # initialize rotation angle
-        self.theta = 0  # azimuth angle
+        self._offset = None
+        # initialize rotation angles
+        self.theta = 0  # azimuthal angle
         self.phi = 0  # polar angle
 
+    def invalidate_cache(self):
+        """
+        This function invalidates the cache of computed properties, forcing them to be recalculated the next time
+        they're accessed.
+        """
+        self._center_of_mass = None
+        self._center_of_geometry = None
+        self._offset = None
+
     def add_sphere(self, sphere):
+        """
+        This function adds spheres objects to the particle object and checks whether it overlaps with the other spheres.
+
+        :param sphere: a sphere object recorded the configuration library
+        :return: an updated particle object with newly added spheres
+        """
         for s in self.spheres:
             if s.is_overlap(sphere):
                 raise ValueError("Overlapping spheres are not allowed.")
         self.spheres.append(sphere)
-        # invalidate the cache and recalculate it when needed
-        self._center_of_mass = None
-        self._center_of_geometry = None
+        # invalidate the cache
+        self.invalidate_cache()
 
     @property
     def center_of_mass(self):
@@ -73,6 +88,16 @@ class Particle:
             self._center_of_geometry = sum([s.center for s in self.spheres]) / len(self.spheres)
         # if already existed, then read from the cache
         return self._center_of_geometry
+
+    @property
+    def offset(self):
+        # if offset does not exist, calculate one
+        if self._offset is None:
+            distance = np.linalg.norm(self.center_of_mass - self.center_of_geometry)
+            average_radius = sum([s.radius for s in self.spheres]) / len(self.spheres)
+            self._offset = distance / average_radius  # scale the offset by sphere radius
+        # if already existed, then read from the cache
+        return self._offset
 
     def to_numerical_array(self):
         arr = []
@@ -96,19 +121,20 @@ class Particle:
 
         for s in self.spheres:
             s.center = rotation_azimuth.apply(s.center - self.center_of_mass) + self.center_of_mass
-        # invalidate the cache and recalculate it when needed
-        self._center_of_mass = None
-        self._center_of_geometry = None
+
         # update rotation angles
         self.theta += theta
         self.phi += phi
+
+        # invalidate the cache
+        self.invalidate_cache()
 
     def scale(self, factor):
         # scaling is done with respect to the center of mass
         for s in self.spheres:
             s.center = self.center_of_mass + factor * (s.center - self.center_of_mass)
             s.radius = s.radius * factor
-        # invalidate the cache and recalculate it when needed
-        self._center_of_mass = None
-        self._center_of_geometry = None
+
+        # invalidate the cache
+        self.invalidate_cache()
 
