@@ -1,3 +1,7 @@
+RADIUS = 0.001  # m, radius of the sphere
+
+FLUID_DENSITY = 971  # density of the medium in (kg/m^3); in this case the silicone oil
+
 # Densities needed for our sets of particles in (kg/m^3)
 DENSITIES = {
     'al': 2790, 
@@ -16,5 +20,11 @@ TERMINAL_VELOCITIES = {
     'ZrO2': 0.0021144428424304832
 }
 
-FLUID_DENSITY = 971  # density of the medium in (kg/m^3); in this case the silicone oil
-RADIUS = 0.001  # m
+# the characteristic color associated with each type of particle
+COLORS = {
+    'al': 'silver',
+    'st': 'grey',
+    'cu': 'orange',
+    'pl': 'white',
+    'ZrO2': 'white'
+}

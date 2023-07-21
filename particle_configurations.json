@@ -1,75 +1,75 @@
 {
     "dimer-st-al": [
-        {"center": [0, 0, 0], "radius": 1, "color": "silver", "material": "al"},
-        {"center": [0, 0, 2], "radius": 1, "color": "grey", "material": "st"}
+        {"center": [0, 0, 0], "radius": 1, "material": "al"},
+        {"center": [0, 0, 2], "radius": 1, "material": "st"}
     ],
     "dimer-st-cu": [
-        {"center": [0, 0, 0], "radius": 1, "color": "grey", "material": "st"},
-        {"center": [0, 0, 2], "radius": 1, "color": "orange", "material": "cu"}
+        {"center": [0, 0, 0], "radius": 1, "material": "st"},
+        {"center": [0, 0, 2], "radius": 1, "material": "cu"}
     ],
     "dimer-al-cu": [
-        {"center": [0, 0, 0], "radius": 1, "color": "silver", "material": "al"},
-        {"center": [0, 0, 2], "radius": 1, "color": "orange", "material": "cu"}
+        {"center": [0, 0, 0], "radius": 1, "material": "al"},
+        {"center": [0, 0, 2], "radius": 1, "material": "cu"}
     ],
     "dimer-zro2-st": [
-        {"center": [0, 0, 0], "radius": 1, "color": "white", "material": "ZrO2"},
-        {"center": [0, 0, 2], "radius": 1, "color": "orange", "material": "cu"}
+        {"center": [0, 0, 0], "radius": 1, "material": "ZrO2"},
+        {"center": [0, 0, 2], "radius": 1, "material": "cu"}
     ],
     "tetramer-st-cu": [
-        {"center": [0, 0, 0], "radius": 1, "color": "silver", "material": "st"},
-        {"center": [1, 1.732051, 0], "radius": 1, "color": "silver", "material": "st"},
-        {"center": [2, 0, 0], "radius": 1, "color": "orange", "material": "cu"},
-        {"center": [1, 1.732051, 2], "radius": 1, "color": "silver", "material": "st"}
+        {"center": [0, 0, 0], "radius": 1, "material": "st"},
+        {"center": [1, 1.732051, 0], "radius": 1, "material": "st"},
+        {"center": [2, 0, 0], "radius": 1, "material": "cu"},
+        {"center": [1, 1.732051, 2], "radius": 1, "material": "st"}
     ],
     "tetramer-al-cu": [
-        {"center": [0, 0, 0], "radius": 1, "color": "silver", "material": "al"},
-        {"center": [1, 1.732051, 0], "radius": 1, "color": "silver", "material": "al"},
-        {"center": [2, 0, 0], "radius": 1, "color": "orange", "material": "cu"},
-        {"center": [1, 1.732051, 2], "radius": 1, "color": "silver", "material": "al"}
+        {"center": [0, 0, 0], "radius": 1, "material": "al"},
+        {"center": [1, 1.732051, 0], "radius": 1, "material": "al"},
+        {"center": [2, 0, 0], "radius": 1, "material": "cu"},
+        {"center": [1, 1.732051, 2], "radius": 1, "material": "al"}
     ],
     "tetramer-al-cu-2": [
-        {"center": [0, 0, 0], "radius": 1, "color": "silver", "material": "al"},
-        {"center": [2, 0, 0], "radius": 1, "color": "silver", "material": "al"},
-        {"center": [4, 0, 0], "radius": 1, "color": "silver", "material": "al"},
-        {"center": [4, 2, 0], "radius": 1, "color": "orange", "material": "cu"}
+        {"center": [0, 0, 0], "radius": 1, "material": "al"},
+        {"center": [2, 0, 0], "radius": 1, "material": "al"},
+        {"center": [4, 0, 0], "radius": 1, "material": "al"},
+        {"center": [4, 2, 0], "radius": 1, "material": "cu"}
     ],
     "tetramer-zro2-cu": [
-        {"center": [0, 0, 0], "radius": 1, "color": "white", "material": "ZrO2"},
-        {"center": [1, 1.732051, 0], "radius": 1, "color": "white", "material": "ZrO2"},
-        {"center": [2, 0, 0], "radius": 1, "color": "orange", "material": "cu"},
-        {"center": [1, 1.732051, 2], "radius": 1, "color": "white", "material": "ZrO2"}
+        {"center": [0, 0, 0], "radius": 1, "material": "ZrO2"},
+        {"center": [1, 1.732051, 0], "radius": 1, "material": "ZrO2"},
+        {"center": [2, 0, 0], "radius": 1, "material": "cu"},
+        {"center": [1, 1.732051, 2], "radius": 1, "material": "ZrO2"}
     ],
     "tetramer-pl-cu": [
-        {"center": [0, 0, 0], "radius": 1, "color": "white", "material": "pl"},
-        {"center": [1, 1.732051, 0], "radius": 1, "color": "white", "material": "pl"},
-        {"center": [2, 0, 0], "radius": 1, "color": "orange", "material": "cu"},
-        {"center": [1, 1.732051, 2], "radius": 1, "color": "white", "material": "pl"}
+        {"center": [0, 0, 0], "radius": 1, "material": "pl"},
+        {"center": [1, 1.732051, 0], "radius": 1, "material": "pl"},
+        {"center": [2, 0, 0], "radius": 1, "material": "cu"},
+        {"center": [1, 1.732051, 2], "radius": 1, "material": "pl"}
     ],
     "tetramer-cu": [
-        {"center": [0, 0, 0], "radius": 1, "color": "orange", "material": "cu"},
-        {"center": [2, 0, 0], "radius": 1, "color": "orange", "material": "cu"},
-        {"center": [4, 0, 0], "radius": 1, "color": "orange", "material": "cu"},
-        {"center": [4, 2, 0], "radius": 1, "color": "orange", "material": "cu"}
+        {"center": [0, 0, 0], "radius": 1, "material": "cu"},
+        {"center": [2, 0, 0], "radius": 1, "material": "cu"},
+        {"center": [4, 0, 0], "radius": 1, "material": "cu"},
+        {"center": [4, 2, 0], "radius": 1, "material": "cu"}
     ],
     "tetramer-pl-cu-2": [
-        {"center": [0, 0, 0], "radius": 1, "color": "white", "material": "pl"},
-        {"center": [2, 0, 0], "radius": 1, "color": "white", "material": "pl"},
-        {"center": [4, 0, 0], "radius": 1, "color": "white", "material": "pl"},
-        {"center": [4, 2, 0], "radius": 1, "color": "orange", "material": "cu"}
+        {"center": [0, 0, 0], "radius": 1, "material": "pl"},
+        {"center": [2, 0, 0], "radius": 1, "material": "pl"},
+        {"center": [4, 0, 0], "radius": 1, "material": "pl"},
+        {"center": [4, 2, 0], "radius": 1, "material": "cu"}
     ],
     "pentamer-al-cu": [
-        {"center": [0, -1, 0], "radius": 1, "color": "silver", "material": "al"},
-        {"center": [0, 1, 0], "radius": 1, "color": "silver", "material": "al"},
-        {"center": [1.732051, 0, 0], "radius": 1, "color": "silver", "material": "al"},
-        {"center": [3.464102, 0, 1], "radius": 1, "color": "silver", "material": "al"},
-        {"center": [3.464102, 0, -1], "radius": 1, "color": "orange", "material": "cu"}
+        {"center": [0, -1, 0], "radius": 1, "material": "al"},
+        {"center": [0, 1, 0], "radius": 1, "material": "al"},
+        {"center": [1.732051, 0, 0], "radius": 1, "material": "al"},
+        {"center": [3.464102, 0, 1], "radius": 1, "material": "al"},
+        {"center": [3.464102, 0, -1], "radius": 1, "material": "cu"}
     ],
     "pentamer-al": [
-        {"center": [0, -1, 0], "radius": 1, "color": "silver", "material": "al"},
-        {"center": [0, 1, 0], "radius": 1, "color": "silver", "material": "al"},
-        {"center": [1.732051, 0, 0], "radius": 1, "color": "silver", "material": "al"},
-        {"center": [3.464102, 0, 1], "radius": 1, "color": "silver", "material": "al"},
-        {"center": [3.464102, 0, -1], "radius": 1, "color": "silver", "material": "al"}
+        {"center": [0, -1, 0], "radius": 1, "material": "al"},
+        {"center": [0, 1, 0], "radius": 1, "material": "al"},
+        {"center": [1.732051, 0, 0], "radius": 1, "material": "al"},
+        {"center": [3.464102, 0, 1], "radius": 1, "material": "al"},
+        {"center": [3.464102, 0, -1], "radius": 1, "material": "al"}
     ]
 }
 

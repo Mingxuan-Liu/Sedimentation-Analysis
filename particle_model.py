@@ -9,15 +9,15 @@ and flipping.
 
 import numpy as np
 from scipy.spatial.transform import Rotation as R
-from records import DENSITIES  # Import the DENSITIES dictionary
+from records import DENSITIES, COLORS  # Import the DENSITIES and COLORS dictionary
 
 
 class Sphere:
     # Instantiate the sphere by inputting its position, radius, color, and material
-    def __init__(self, center, radius, color, material):
+    def __init__(self, center, radius, material):
         self.center = np.array(center)
         self.radius = radius
-        self.color = color
+        self.color = COLORS[material]
         self.material = material
         try:
             self.density = DENSITIES[material]  # retrieve the density information from the dictionary
