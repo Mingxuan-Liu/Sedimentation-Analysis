@@ -27,6 +27,18 @@
         {"center": [2, 0, 0], "radius": 1, "color": "orange", "material": "cu"},
         {"center": [1, 1.732051, 2], "radius": 1, "color": "silver", "material": "al"}
     ],
+    "tetramer-al-cu-2": [
+        {"center": [0, 0, 0], "radius": 1, "color": "silver", "material": "al"},
+        {"center": [2, 0, 0], "radius": 1, "color": "silver", "material": "al"},
+        {"center": [4, 0, 0], "radius": 1, "color": "silver", "material": "al"},
+        {"center": [4, 2, 0], "radius": 1, "color": "orange", "material": "cu"}
+    ],
+    "tetramer-zro2-cu": [
+        {"center": [0, 0, 0], "radius": 1, "color": "white", "material": "ZrO2"},
+        {"center": [1, 1.732051, 0], "radius": 1, "color": "white", "material": "ZrO2"},
+        {"center": [2, 0, 0], "radius": 1, "color": "orange", "material": "cu"},
+        {"center": [1, 1.732051, 2], "radius": 1, "color": "white", "material": "ZrO2"}
+    ],
     "tetramer-pl-cu": [
         {"center": [0, 0, 0], "radius": 1, "color": "white", "material": "pl"},
         {"center": [1, 1.732051, 0], "radius": 1, "color": "white", "material": "pl"},
@@ -51,6 +63,13 @@
         {"center": [1.732051, 0, 0], "radius": 1, "color": "silver", "material": "al"},
         {"center": [3.464102, 0, 1], "radius": 1, "color": "silver", "material": "al"},
         {"center": [3.464102, 0, -1], "radius": 1, "color": "orange", "material": "cu"}
+    ],
+    "pentamer-al": [
+        {"center": [0, -1, 0], "radius": 1, "color": "silver", "material": "al"},
+        {"center": [0, 1, 0], "radius": 1, "color": "silver", "material": "al"},
+        {"center": [1.732051, 0, 0], "radius": 1, "color": "silver", "material": "al"},
+        {"center": [3.464102, 0, 1], "radius": 1, "color": "silver", "material": "al"},
+        {"center": [3.464102, 0, -1], "radius": 1, "color": "silver", "material": "al"}
     ]
 }
 
