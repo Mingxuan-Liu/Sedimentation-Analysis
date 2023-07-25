@@ -10,8 +10,34 @@ with open('particle_configurations.json') as f:
     configurations = json.load(f)
 
 
-# This function visualizes the particle in 3D interactive domain
 def plot_particle(particle, name, ax, transparency=False):
+    """
+    Visualize a given particle in a 3D interactive domain.
+
+    This function plots the particle's spheres, center of mass, and geometric center.
+    It also creates a legend for the different materials used in the spheres.
+    The function adjusts the limits of the plot according to the extents of the spheres.
+    If `transparency` is set to True, the spheres will be semi-transparent.
+
+    Parameters
+    ----------
+    particle : Particle
+        The particle to visualize. It should have properties spheres (list of spheres
+        with each sphere having center, radius, color, and material), center_of_mass (list of
+        coordinates), center_of_geometry (list of coordinates), offset, theta, and phi.
+    name : str
+        The name of the particle, which is used in the title of the plot.
+    ax : matplotlib.axes.Axes
+        The axes on which to plot the particle.
+    transparency : bool, optional
+        If set to True, the spheres will be plotted with a transparency of 0.5.
+        If False (the default), the spheres will be fully opaque.
+
+    Returns
+    -------
+    None
+
+    """
     min_val = np.inf
     max_val = -np.inf
     # Create a list to hold the legend entries
@@ -57,7 +83,7 @@ def plot_particle(particle, name, ax, transparency=False):
     # add the legend
     ax.legend(handles=legend_elements, loc='lower center', bbox_to_anchor=(1.1, -0.25))
 
-    ax.set_box_aspect([1,1,1])
+    ax.set_box_aspect([1, 1, 1])
 
 
 def plot_motion(data, scale, frame_rate, time_scale, diff_method, avg_size, ax):
@@ -139,6 +165,27 @@ def plot_motion(data, scale, frame_rate, time_scale, diff_method, avg_size, ax):
 
 
 def plot_stacked_image(frames, ax):
+    """
+    Plot and return the maximum intensity projection of selected frames in a 3D image stack.
+
+    This function selects 25 evenly spaced slices from the stack and calculates their
+    maximum intensity projection (MIP). It then displays this MIP on the provided axes.
+    The MIP of the selected frames is also returned for potential use in other functions
+    (e.g., for image stretching).
+
+    Parameters
+    ----------
+    frames : np.ndarray
+        3D array representing the image stack, with frames along the first axis.
+    ax : matplotlib.axes.Axes
+        The axes on which to plot the stacked image.
+
+    Returns
+    -------
+    mip_selected : np.ndarray
+        2D array representing the maximum intensity projection of the selected frames.
+
+    """
     # Number of total frames
     total_frames = frames.shape[0]
 
@@ -160,6 +207,24 @@ def plot_stacked_image(frames, ax):
 
 
 def plot_stretched_image(mip_selected, ax):
+    """
+    Plot a stretched version of an image along the x-axis.
+
+    This function resizes the provided image, extending its width by a factor of 20.
+    It then displays this stretched image on the provided axes.
+
+    Parameters
+    ----------
+    mip_selected : np.ndarray
+        2D array representing the image to stretch.
+    ax : matplotlib.axes.Axes
+        The axes on which to plot the stretched image.
+
+    Returns
+    -------
+    None
+
+    """
     # Define a new width for the stretched image (e.g., ten times the original width)
     new_width = mip_selected.shape[1] * 20  # change the multiplier as needed
 
