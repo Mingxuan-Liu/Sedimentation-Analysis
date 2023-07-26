@@ -86,6 +86,36 @@ def plot_particle(particle, name, ax, transparency=False):
     ax.set_box_aspect([1, 1, 1])
 
 
+def plot_principal_axes(com, eigenvectors, length, ax):
+    """
+    Plot the principal axes of the particle from its center of mass in 3D space.
+
+    Parameters
+    ----------
+    com : numpy.ndarray
+        The center of mass of the particle, given as a 3-element array.
+    ax : matplotlib.axes._subplots.Axes3DSubplot
+        The 3D subplot where the axes will be plotted.
+    eigenvectors : numpy.ndarray
+        The principal axes of the particle, given as a 3x3 array where each column is an eigenvector.
+    length : float, optional
+        The length of the vectors representing the axes in the plot.
+
+    Returns
+    -------
+    None
+    """
+    # Define the colors for the axes
+    colors = ['r', 'g', 'b']
+
+    # Create vectors for the principal axes, starting at the center of mass and
+    # extending along each axis. Multiply by the length for visibility.
+    for i in range(3):
+        ax.quiver(com[0], com[1], com[2],
+                  eigenvectors[0, i]*length, eigenvectors[1, i]*length, eigenvectors[2, i]*length,
+                  color=colors[i], alpha=0.6, linewidth=2)
+
+
 def plot_motion(data, scale, frame_rate, time_scale, diff_method, avg_size, ax):
     """
     This function plots the motion properties of the falling particle such as the x & y positions and x & y velocities

@@ -10,7 +10,6 @@ and flipping.
 import numpy as np
 from scipy.spatial.transform import Rotation as R
 from records import DENSITIES, COLORS  # Import the DENSITIES and COLORS dictionary
-from particle_helper import inertia_tensor_sphere
 
 
 class Sphere:
@@ -36,6 +35,24 @@ class Sphere:
         # Calculate the mass based on volume and density (mass = density * volume)
         volume = (4 / 3) * np.pi * (self.radius ** 3)  # Volume of sphere
         return (self.density * (10 ** -9)) * volume
+
+
+def inertia_tensor_sphere(mass, radius, d_vector):
+    """
+    Calculate the inertia tensor of a sphere.
+
+    :param mass: Mass of the sphere.
+    :param radius: Radius of the sphere.
+    :param d_vector: Vector from center of mass of the system to the center of the sphere.
+    :return: Inertia tensor of the sphere.
+    """
+    # Inertia tensor in the center of mass of the sphere
+    I_cm = (2/5) * mass * radius**2 * np.eye(3)
+    # Distance from the center of mass of the system to the center of the sphere
+    d = np.linalg.norm(d_vector)
+    # Inertia tensor of the sphere with respect to the system's center of mass
+    I = I_cm + mass * d**2 * (np.eye(3) - np.outer(d_vector, d_vector) / d**2)
+    return I
 
 
 class Particle:
