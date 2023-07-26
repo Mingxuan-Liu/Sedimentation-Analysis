@@ -81,7 +81,7 @@ def plot_particle(particle, name, ax, transparency=False):
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
     # add the legend
-    ax.legend(handles=legend_elements, loc='lower center', bbox_to_anchor=(1.1, -0.25))
+    ax.legend(handles=legend_elements, loc='lower center', bbox_to_anchor=(1.1, 0))
 
     ax.set_box_aspect([1, 1, 1])
 

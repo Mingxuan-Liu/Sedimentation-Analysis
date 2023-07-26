@@ -10,6 +10,7 @@ and flipping.
 import numpy as np
 from scipy.spatial.transform import Rotation as R
 from records import DENSITIES, COLORS  # Import the DENSITIES and COLORS dictionary
+from particle_helper import inertia_tensor_sphere
 
 
 class Sphere:
@@ -98,6 +99,28 @@ class Particle:
             self._offset = distance / average_radius  # scale the offset by sphere radius
         # if already existed, then read from the cache
         return self._offset
+
+    def inertia_tensor(self):
+        """
+        Calculate the inertia tensor of the particle.
+
+        :return: Inertia tensor of the particle.
+        """
+        # Sum up the inertia tensor of each sphere
+        I_total = sum([inertia_tensor_sphere(s.mass(), s.radius, s.center - self.center_of_mass) for s in self.spheres])
+        return I_total
+
+    def principal_axes(self):
+        """
+        Calculate the principal axes of inertia of the particle.
+
+        :return: Principal moments of inertia (eigenvalues) and principal axes (normalized eigenvectors).
+        """
+        I = self.inertia_tensor()
+        eigenvalues, eigenvectors = np.linalg.eigh(I)
+        # Normalize the eigenvectors
+        eigenvectors /= np.linalg.norm(eigenvectors, axis=0)
+        return eigenvalues, eigenvectors
 
     def to_numerical_array(self):
         arr = []
