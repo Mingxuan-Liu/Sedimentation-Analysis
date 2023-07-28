@@ -51,7 +51,10 @@ def inertia_tensor_sphere(mass, radius, d_vector):
     # Distance from the center of mass of the system to the center of the sphere
     d = np.linalg.norm(d_vector)
     # Inertia tensor of the sphere with respect to the system's center of mass
-    I = I_cm + mass * d**2 * (np.eye(3) - np.outer(d_vector, d_vector) / d**2)
+    # The generalized version of the parallel axis theorem can be expressed in the form of
+    # coordinate-free notation as J = I + m[(R*R)E_3-R#R]
+    # where E_3 is the 3 by 3 identity matrix and # is the outer product.
+    I = I_cm + mass * (d**2 * np.eye(3) - np.outer(d_vector, d_vector))
     return I
 
 
