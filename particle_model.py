@@ -61,13 +61,10 @@ def inertia_tensor_sphere(mass, radius, d_vector):
 class Particle:
     def __init__(self):
         self.spheres = []
-        # initialize the center of mass, center of geometry, and the offset 'chi' as none
         self._center_of_mass = None
         self._center_of_geometry = None
         self._offset = None
-        # initialize rotation angles
-        self.theta = 0  # azimuthal angle
-        self.phi = 0  # polar angle
+        self._principal_axes = None
 
     def invalidate_cache(self):
         """
@@ -77,6 +74,7 @@ class Particle:
         self._center_of_mass = None
         self._center_of_geometry = None
         self._offset = None
+        self._principal_axes = None
 
     def add_sphere(self, sphere):
         """
@@ -120,6 +118,16 @@ class Particle:
         # if already existed, then read from the cache
         return self._offset
 
+    @property
+    def principal_axes(self):
+        if self._principal_axes is None:
+            I = self.inertia_tensor()
+            eigenvalues, eigenvectors = np.linalg.eigh(I)
+            # Normalize the eigenvectors
+            eigenvectors /= np.linalg.norm(eigenvectors, axis=0)
+            self._principal_axes = eigenvectors  # update this line
+        return self._principal_axes
+
     def inertia_tensor(self):
         """
         Calculate the inertia tensor of the particle.
@@ -130,47 +138,31 @@ class Particle:
         I_total = sum([inertia_tensor_sphere(s.mass(), s.radius, s.center - self.center_of_mass) for s in self.spheres])
         return I_total
 
-    def principal_axes(self):
-        """
-        Calculate the principal axes of inertia of the particle.
-
-        :return: Principal moments of inertia (eigenvalues) and principal axes (normalized eigenvectors).
-        """
-        I = self.inertia_tensor()
-        eigenvalues, eigenvectors = np.linalg.eigh(I)
-        # Normalize the eigenvectors
-        eigenvectors /= np.linalg.norm(eigenvectors, axis=0)
-        return eigenvalues, eigenvectors
-
     def to_numerical_array(self):
         arr = []
         for sphere in self.spheres:
             arr.append([*sphere.center, sphere.radius])
         return np.array(arr)
 
-    def rotate(self, theta, phi):
+    def rotate(self, axis, angle):
         """
-        This function rotates the particle object by the azimuthal and polar angles theta and phi.
+        Rotate the particle around a given axis by a certain angle.
 
-        :param theta: Azimuthal angle for rotation (in degrees)
-        :param phi: Polar angle for rotation (in degrees)
-        :return: A rotated particle object and updated rotation angles theta and phi
+        :param axis: Axis of rotation (one of the eigenvectors).
+        :param angle: Angle of rotation in degrees.
         """
-        # define the rotation axis from center of mass to center of geometry
-        axis = self.center_of_geometry - self.center_of_mass
-        axis = axis / np.linalg.norm(axis)  # normalize the axis
-
-        rotation_azimuth = R.from_rotvec(axis * np.deg2rad(theta))  # create a rotation vector from polar angle
+        # Create a rotation object
+        rot = R.from_rotvec((np.radians(angle) * axis))
 
         for s in self.spheres:
-            s.center = rotation_azimuth.apply(s.center - self.center_of_mass) + self.center_of_mass
+            # The rotation is performed with respect to the center of mass
+            relative_position = s.center - self.center_of_mass
+            # Apply rotation
+            new_relative_position = rot.apply(relative_position)
+            # Update sphere center
+            s.center = self.center_of_mass + new_relative_position
 
-        # update rotation angles
-        self.theta += theta
-        self.phi += phi
-
-        # invalidate the cache
-        self.invalidate_cache()
+        self.invalidate_cache()  # Update the cache
 
     def scale(self, factor):
         # scaling is done with respect to the center of mass

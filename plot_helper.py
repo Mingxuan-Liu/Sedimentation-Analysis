@@ -72,7 +72,7 @@ def plot_particle(particle, name, ax, transparency=False):
 
     # Set title and capitalize each word as well as the element name
     title = name.title()
-    ax.set_title(title + f", $\\chi={particle.offset:.2f}$, $\\theta={particle.theta}^o$, $\\phi={particle.phi}^o$")
+    ax.set_title(title + f", $\\chi={particle.offset:.2f}$")
 
     ax.set_xlim3d([min_val, max_val])
     ax.set_ylim3d([min_val, max_val])
