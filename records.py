@@ -8,7 +8,8 @@ DENSITIES = {
     'st': 7820, 
     'cu': 8920, 
     'pl': 1420, 
-    'ZrO2': 5680
+    'ZrO2': 5680,
+    'wc': 15630
 }
 
 # The five terminal velocities needed for our sets of particles in (m/s)
@@ -22,9 +23,10 @@ TERMINAL_VELOCITIES = {
 
 # the characteristic color associated with each type of particle
 COLORS = {
-    'al': 'silver',
-    'st': 'grey',
-    'cu': 'orange',
-    'pl': 'white',
-    'ZrO2': 'white'
+    'al': '#C0C0C0',
+    'st': '#808080',
+    'cu': '#FFA500',
+    'pl': '#FFFFFF',
+    'ZrO2': '#FFFFFF',
+    'wc': '#979A9A'
 }

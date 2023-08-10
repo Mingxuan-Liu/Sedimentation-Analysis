@@ -45,6 +45,36 @@
         {"center": [2, 0, 0], "radius": 1, "material": "cu"},
         {"center": [1, 1.732051, 2], "radius": 1, "material": "pl"}
     ],
+    "tetramer-cu-wc": [
+        {"center": [0, 0, 0], "radius": 1, "material": "cu"},
+        {"center": [1, 1.732051, 0], "radius": 1, "material": "cu"},
+        {"center": [2, 0, 0], "radius": 1, "material": "wc"},
+        {"center": [1, 1.732051, 2], "radius": 1, "material": "cu"}
+    ],
+    "tetramer-st-wc": [
+        {"center": [0, 0, 0], "radius": 1, "material": "st"},
+        {"center": [1, 1.732051, 0], "radius": 1, "material": "st"},
+        {"center": [2, 0, 0], "radius": 1, "material": "wc"},
+        {"center": [1, 1.732051, 2], "radius": 1, "material": "st"}
+    ],
+    "tetramer-zro2-wc": [
+        {"center": [0, 0, 0], "radius": 1, "material": "ZrO2"},
+        {"center": [1, 1.732051, 0], "radius": 1, "material": "ZrO2"},
+        {"center": [2, 0, 0], "radius": 1, "material": "wc"},
+        {"center": [1, 1.732051, 2], "radius": 1, "material": "ZrO2"}
+    ],
+    "tetramer-al-wc": [
+        {"center": [0, 0, 0], "radius": 1, "material": "al"},
+        {"center": [1, 1.732051, 0], "radius": 1, "material": "al"},
+        {"center": [2, 0, 0], "radius": 1, "material": "wc"},
+        {"center": [1, 1.732051, 2], "radius": 1, "material": "al"}
+    ],
+    "tetramer-pl-wc": [
+        {"center": [0, 0, 0], "radius": 1, "material": "pl"},
+        {"center": [1, 1.732051, 0], "radius": 1, "material": "pl"},
+        {"center": [2, 0, 0], "radius": 1, "material": "wc"},
+        {"center": [1, 1.732051, 2], "radius": 1, "material": "pl"}
+    ],
     "tetramer-cu": [
         {"center": [0, 0, 0], "radius": 1, "material": "cu"},
         {"center": [2, 0, 0], "radius": 1, "material": "cu"},
