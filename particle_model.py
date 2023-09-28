@@ -65,6 +65,10 @@ class Particle:
         self._center_of_geometry = None
         self._offset = None
         self._principal_axes = None
+        # initialize the three angles
+        self.theta_1 = 0.0
+        self.theta_2 = 0.0
+        self.theta_3 = 0.0
 
     def invalidate_cache(self):
         """
@@ -121,11 +125,13 @@ class Particle:
     @property
     def principal_axes(self):
         if self._principal_axes is None:
+            # retrieve the inertia tensor property of the particle
             I = self.inertia_tensor()
+            # determine the eigenvectors and eigenvalues
             eigenvalues, eigenvectors = np.linalg.eigh(I)
-            # Normalize the eigenvectors
+            # normalize the eigenvectors
             eigenvectors /= np.linalg.norm(eigenvectors, axis=0)
-            self._principal_axes = eigenvectors  # update this line
+            self._principal_axes = eigenvectors  # update the property
         return self._principal_axes
 
     def inertia_tensor(self):
@@ -144,25 +150,41 @@ class Particle:
             arr.append([*sphere.center, sphere.radius])
         return np.array(arr)
 
-    def rotate(self, axis, angle):
+    def rotate(self, angle_1, angle_2, angle_3):
         """
-        Rotate the particle around a given axis by a certain angle.
-
-        :param axis: Axis of rotation (one of the eigenvectors).
-        :param angle: Angle of rotation in degrees.
+        Rotate the particle around its principal axes by the given angles in degrees.
         """
-        # Create a rotation object
-        rot = R.from_rotvec((np.radians(angle) * axis))
+        # update the record of the particle's rotation angles in radians
+        self.theta_1 = np.radians(angle_1)
+        self.theta_2 = np.radians(angle_2)
+        self.theta_3 = np.radians(angle_3)
 
+        # define rotation matrices around the principal axes
+        R1 = np.array([
+            [1, 0, 0],
+            [0, np.cos(self.theta_1), -np.sin(self.theta_1)],
+            [0, np.sin(self.theta_1), np.cos(self.theta_1)]
+        ])
+
+        R2 = np.array([
+            [np.cos(self.theta_2), 0, np.sin(self.theta_2)],
+            [0, 1, 0],
+            [-np.sin(self.theta_2), 0, np.cos(self.theta_2)]
+        ])
+
+        R3 = np.array([
+            [np.cos(self.theta_3), -np.sin(self.theta_3), 0],
+            [np.sin(self.theta_3), np.cos(self.theta_3), 0],
+            [0, 0, 1]
+        ])
+
+        # rotate around the principal axes
+        R = np.dot(R3, np.dot(R2, R1))
         for s in self.spheres:
-            # The rotation is performed with respect to the center of mass
-            relative_position = s.center - self.center_of_mass
-            # Apply rotation
-            new_relative_position = rot.apply(relative_position)
-            # Update sphere center
-            s.center = self.center_of_mass + new_relative_position
+            s.center = np.dot(R, s.center - self.center_of_mass) + self.center_of_mass
 
-        self.invalidate_cache()  # Update the cache
+        # update the properties of the particle after rotation
+        self.invalidate_cache()
 
     def scale(self, factor):
         # scaling is done with respect to the center of mass
