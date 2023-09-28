@@ -8,7 +8,7 @@ and flipping.
 """
 
 import numpy as np
-from scipy.spatial.transform import Rotation as R
+from scipy.spatial.transform import Rotation
 from records import DENSITIES, COLORS  # Import the DENSITIES and COLORS dictionary
 
 
@@ -65,10 +65,6 @@ class Particle:
         self._center_of_geometry = None
         self._offset = None
         self._principal_axes = None
-        # initialize the three angles
-        self.theta_1 = 0.0
-        self.theta_2 = 0.0
-        self.theta_3 = 0.0
 
     def invalidate_cache(self):
         """
@@ -78,7 +74,6 @@ class Particle:
         self._center_of_mass = None
         self._center_of_geometry = None
         self._offset = None
-        self._principal_axes = None
 
     def add_sphere(self, sphere):
         """
@@ -150,48 +145,37 @@ class Particle:
             arr.append([*sphere.center, sphere.radius])
         return np.array(arr)
 
-    def rotate(self, angle_1, angle_2, angle_3):
+    def rotate(self, axis, angle):
         """
-        Rotate the particle around its principal axes by the given angles in degrees.
+        Rotate the particle around a given principal axis by a certain angle in degrees.
+
+        Parameters:
+        - axis: A string indicating which principal axis to rotate around ('ax1', 'ax2', or 'ax3').
+        - angle: The rotation angle in degrees.
         """
-        # update the record of the particle's rotation angles in radians
-        self.theta_1 = np.radians(angle_1)
-        self.theta_2 = np.radians(angle_2)
-        self.theta_3 = np.radians(angle_3)
+        # Convert the angle to radians
+        angle_rad = np.radians(angle)
 
-        # define rotation matrices around the principal axes
-        R1 = np.array([
-            [1, 0, 0],
-            [0, np.cos(self.theta_1), -np.sin(self.theta_1)],
-            [0, np.sin(self.theta_1), np.cos(self.theta_1)]
-        ])
+        # Determine the rotation axis based on the principal axes
+        if axis == 'ax1':
+            rot_axis = self.principal_axes[:, 0]
+        elif axis == 'ax2':
+            rot_axis = self.principal_axes[:, 1]
+        elif axis == 'ax3':
+            rot_axis = self.principal_axes[:, 2]
+        else:
+            raise ValueError("Invalid axis. Choose from 'ax1', 'ax2', or 'ax3'.")
 
-        R2 = np.array([
-            [np.cos(self.theta_2), 0, np.sin(self.theta_2)],
-            [0, 1, 0],
-            [-np.sin(self.theta_2), 0, np.cos(self.theta_2)]
-        ])
+        # Create a rotation object
+        rot = Rotation.from_rotvec(angle_rad * rot_axis)
 
-        R3 = np.array([
-            [np.cos(self.theta_3), -np.sin(self.theta_3), 0],
-            [np.sin(self.theta_3), np.cos(self.theta_3), 0],
-            [0, 0, 1]
-        ])
-
-        # rotate around the principal axes
-        R = np.dot(R3, np.dot(R2, R1))
+        # Apply the rotation to each sphere in the particle
         for s in self.spheres:
-            s.center = np.dot(R, s.center - self.center_of_mass) + self.center_of_mass
+            s.center = rot.apply(s.center - self.center_of_mass) + self.center_of_mass
 
-        # update the properties of the particle after rotation
-        self.invalidate_cache()
+        # Rotate the principal axes
+        self._principal_axes = rot.apply(self.principal_axes)
 
-    def scale(self, factor):
-        # scaling is done with respect to the center of mass
-        for s in self.spheres:
-            s.center = self.center_of_mass + factor * (s.center - self.center_of_mass)
-            s.radius = s.radius * factor
-
-        # invalidate the cache
+        # invalidate the cache to update the properties
         self.invalidate_cache()
 

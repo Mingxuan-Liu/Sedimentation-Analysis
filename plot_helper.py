@@ -115,9 +115,6 @@ def plot_principal_axes(com, eigenvectors, length, ax):
                   eigenvectors[0, i]*length, eigenvectors[1, i]*length, eigenvectors[2, i]*length,
                   color=colors[i], alpha=0.6, linewidth=2)
 
-    # Add a legend to the plot to indicate the order of the principal axes
-    ax.legend()
-
 
 def plot_motion(data, scale, frame_rate, time_scale, diff_method, avg_size, ax):
     """
