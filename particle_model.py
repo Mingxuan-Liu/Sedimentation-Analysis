@@ -61,10 +61,11 @@ def inertia_tensor_sphere(mass, radius, d_vector):
 class Particle:
     def __init__(self):
         self.spheres = []
-        self._center_of_mass = None
-        self._center_of_geometry = None
-        self._offset = None
-        self._principal_axes = None
+        self._initial_config = []  # store the initial configuration of the particle, just in case of reset()
+        self._center_of_mass = None  # center of mass of the particle
+        self._center_of_geometry = None  # geometric center of the particle
+        self._offset = None  # the offset 'chi' that measures that distance from com to cog
+        self._principal_axes = None  # three principal axes of the particle
 
     def invalidate_cache(self):
         """
@@ -76,18 +77,33 @@ class Particle:
         self._offset = None
 
     def add_sphere(self, sphere):
-        """
-        This function adds spheres objects to the particle object and checks whether it overlaps with the other spheres.
-
-        :param sphere: a sphere object recorded the configuration library
-        :return: an updated particle object with newly added spheres
-        """
         for s in self.spheres:
             if s.is_overlap(sphere):
                 raise ValueError("Overlapping spheres are not allowed.")
         self.spheres.append(sphere)
-        # invalidate the cache
+        # Store the initial configuration of the sphere
+        self._initial_config.append({
+            "center": np.copy(sphere.center),
+            "radius": sphere.radius,
+            "material": sphere.material
+        })
         self.invalidate_cache()
+
+    def reset(self):
+        """
+        Reset the particle to its original configuration.
+        """
+        # Clear current sphere objects
+        self.spheres.clear()
+        # Re-add spheres with initial configurations
+        for config in self._initial_config:
+            sphere = Sphere(config["center"], config["radius"], config["material"])
+            self.spheres.append(sphere)  # Directly append without overlap check for efficiency
+        # Invalidate cache to force recalculation of derived properties
+        self.invalidate_cache()
+        # In each reset, clear the cache for principal axes and recalculate it
+        self._principal_axes = None
+
 
     @property
     def center_of_mass(self):
@@ -173,7 +189,8 @@ class Particle:
         for s in self.spheres:
             s.center = rot.apply(s.center - self.center_of_mass) + self.center_of_mass
 
-        # Rotate the principal axes
+        # Rotate the principal axes the same way as rotating the sphere
+        # We want to avoid recalculating the principal axes, to keep the order of axes consistent
         self._principal_axes = rot.apply(self.principal_axes)
 
         # invalidate the cache to update the properties
