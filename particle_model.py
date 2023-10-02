@@ -175,10 +175,13 @@ class Particle:
         # Determine the rotation axis based on the principal axes
         if axis == 'ax1':
             rot_axis = self.principal_axes[:, 0]
+            other_axes = [1, 2]  # Indices of the other two axes that are perpendicular to the rotating axis
         elif axis == 'ax2':
             rot_axis = self.principal_axes[:, 1]
+            other_axes = [0, 2]  # Indices of the other two axes that are perpendicular to the rotating axis
         elif axis == 'ax3':
             rot_axis = self.principal_axes[:, 2]
+            other_axes = [0, 1]  # Indices of the other two axes that are perpendicular to the rotating axis
         else:
             raise ValueError("Invalid axis. Choose from 'ax1', 'ax2', or 'ax3'.")
 
@@ -189,10 +192,14 @@ class Particle:
         for s in self.spheres:
             s.center = rot.apply(s.center - self.center_of_mass) + self.center_of_mass
 
-        # Rotate the principal axes the same way as rotating the sphere
-        # We want to avoid recalculating the principal axes, to keep the order of axes consistent
-        self._principal_axes = rot.apply(self.principal_axes)
+        # Create a rotation matrix for the principal axes
+        # Note: The rotation matrix is transposed because we are transforming coordinate axes
+        # (which in this case are the three principal axes)
+        rotation_matrix = rot.as_matrix().T
 
-        # invalidate the cache to update the properties
+        # Rotate only the two principal axes that are perpendicular to the rotation axis
+        self._principal_axes[:, other_axes] = np.dot(rotation_matrix, self._principal_axes[:, other_axes])
+
+        # Invalidate the cache to update the properties
         self.invalidate_cache()
 
