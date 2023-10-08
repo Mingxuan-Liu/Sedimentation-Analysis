@@ -151,7 +151,7 @@ for data_loc in sorted(os.listdir(data_path)):
     particle_data = pd.read_csv(file_loc)
     
     #scale = scales[count-1] #scales array determined through imagej
-    scale = 7.12 #3D Scale
+    scale = 7.12  # 1mm in the physical world occupies around 7 pixels in the image
     
     #Retrieving positions, angles, and time arrays
     #p0 is heavier

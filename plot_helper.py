@@ -116,6 +116,37 @@ def plot_principal_axes(com, eigenvectors, length, ax):
                   color=colors[i], alpha=0.6, linewidth=2)
 
 
+def plot_shadow(particle, domain_size, scale=7):
+    """
+    Visualize the shadow of the particle on both 'xz' and 'yz' planes.
+
+    Parameters:
+    - particle: The Particle object.
+    - domain_size: Side length of the squared domain in mm.
+    - scale: The scale factor converting mm to pixels (default is 7).
+    """
+    # Generate the shadow grids
+    shadow_grid_xz = particle.shadow('xz', domain_size, scale)
+    shadow_grid_yz = particle.shadow('yz', domain_size, scale)
+
+    # Create a plot with 1 row and 2 columns
+    fig, axs = plt.subplots(1, 2, figsize=(8, 6))
+
+    # Display the shadow grid for 'xz' plane
+    axs[0].imshow(shadow_grid_xz, cmap='gray_r', aspect='equal')
+    axs[0].axis('off')
+    axs[0].set_title('Shadow on X-Z Plane')
+
+    # Display the shadow grid for 'yz' plane
+    axs[1].imshow(shadow_grid_yz, cmap='gray_r', aspect='equal')
+    axs[1].axis('off')
+    axs[1].set_title('Shadow on Y-Z Plane')
+
+    # Display the plot
+    plt.tight_layout()
+    plt.show()
+
+
 def plot_motion(data, scale, frame_rate, time_scale, diff_method, avg_size, ax):
     """
     This function plots the motion properties of the falling particle such as the x & y positions and x & y velocities

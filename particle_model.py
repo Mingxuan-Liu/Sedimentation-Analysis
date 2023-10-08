@@ -195,11 +195,52 @@ class Particle:
         # Create a rotation matrix for the principal axes
         # Note: The rotation matrix is transposed because we are transforming coordinate axes
         # (which in this case are the three principal axes)
-        rotation_matrix = rot.as_matrix().T
+        rotation_matrix = rot.as_matrix()
 
         # Rotate only the two principal axes that are perpendicular to the rotation axis
         self._principal_axes[:, other_axes] = np.dot(rotation_matrix, self._principal_axes[:, other_axes])
 
         # Invalidate the cache to update the properties
         self.invalidate_cache()
+
+    def shadow(self, plane, domain_size, scale=7):
+        """
+        Generate a binary 2D numpy array representing the shadow of the particle.
+
+        Parameters:
+        - plane: A string indicating the projection plane ('xz' or 'yz').
+        - domain_size: Side length of the squared domain in mm.
+        - scale: The scale factor converting mm to pixels (default is 7).
+
+        Returns:
+        - A 2D numpy array where the shadow of the particle is represented by 1 and empty space by 0.
+        """
+        # Calculate the grid size in pixels
+        grid_size = int(domain_size * scale)
+
+        # Initialize a 2D grid with zeros
+        shadow_grid = np.zeros((grid_size, grid_size), dtype=int)
+
+        # Determine the 2D coordinates based on the specified projection plane
+        if plane == 'xz':
+            indices = (0, 2)  # Use x and z coordinates
+        elif plane == 'yz':
+            indices = (1, 2)  # Use y and z coordinates
+        else:
+            raise ValueError("Invalid plane. Choose from 'xz' or 'yz'.")
+
+        # Convert continuous coordinates to discrete grid coordinates
+        for s in self.spheres:
+            x, z = s.center[indices[0]], s.center[indices[1]]
+            # Convert to grid coordinates
+            i = int((x + domain_size / 2) * scale)
+            j = int((z + domain_size / 2) * scale)
+            # Mark the grid cell and its neighbors within the radius as 1
+            radius_pixels = int(s.radius * scale)
+            for di in range(-radius_pixels, radius_pixels + 1):
+                for dj in range(-radius_pixels, radius_pixels + 1):
+                    if (di ** 2 + dj ** 2) ** 0.5 <= radius_pixels:
+                        shadow_grid[i + di, j + dj] = 1
+
+        return shadow_grid
 
