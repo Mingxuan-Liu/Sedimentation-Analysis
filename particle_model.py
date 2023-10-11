@@ -241,7 +241,11 @@ class Particle:
                 for dj in range(-radius_pixels, radius_pixels + 1):
                     if (di ** 2 + dj ** 2) ** 0.5 <= radius_pixels:
                         shadow_grid[i + di, j + dj] = 1
-        # Rotate the shadow grid 90 degrees clockwise
+
+        # Rotate the shadow grid 90 degrees counter-clockwise
+        # The shadow matrix needs to be rotated because the i index goes from top to bottom, and the j index goes from
+        # left to right. To mimic the experimental data, the matrix needs to be rotated counter-clockwise so that the i
+        # index goes from left to right, and the j index goes from bottom to top.
         shadow_grid = np.rot90(shadow_grid, k=1)
         return shadow_grid
 
