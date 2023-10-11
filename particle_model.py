@@ -183,7 +183,7 @@ class Particle:
             rot_axis = self.principal_axes[:, 2]
             other_axes = [0, 1]  # Indices of the other two axes that are perpendicular to the rotating axis
         else:
-            raise ValueError("Invalid axis. Choose from 'ax1', 'ax2', or 'ax3'.")
+            raise ValueError("Invalid rotation axis. Choose from 'ax1', 'ax2', or 'ax3'.")
 
         # Create a rotation object
         rot = Rotation.from_rotvec(angle_rad * rot_axis)
@@ -227,7 +227,7 @@ class Particle:
         elif plane == 'yz':
             indices = (1, 2)  # Use y and z coordinates
         else:
-            raise ValueError("Invalid plane. Choose from 'xz' or 'yz'.")
+            raise ValueError("Invalid projection plane. Choose from 'xz' or 'yz'.")
 
         # Convert continuous coordinates to discrete grid coordinates
         for s in self.spheres:
@@ -241,6 +241,7 @@ class Particle:
                 for dj in range(-radius_pixels, radius_pixels + 1):
                     if (di ** 2 + dj ** 2) ** 0.5 <= radius_pixels:
                         shadow_grid[i + di, j + dj] = 1
-
+        # Rotate the shadow grid 90 degrees clockwise
+        shadow_grid = np.rot90(shadow_grid, k=1)
         return shadow_grid
 
