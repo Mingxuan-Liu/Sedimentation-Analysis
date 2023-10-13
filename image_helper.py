@@ -35,3 +35,31 @@ def crop_image(frame, length, width, params):
     binary_image = np.where(cropped_image > 0, 1, 0)
 
     return binary_image
+
+
+def check_polar(frames, params):
+    """
+    This function batch processes all the .tif image frames, and check whether it contains images with sphere number
+    other than 2.
+    :param frames: .tif image sequence
+    :param params: parameter sets for particle tracking using trackpy package
+    :return: printed message of whether there is a bad frame in the list
+    """
+    data = tp.batch(frames, **params);
+    # Link the particles in each frame to their positions in previous two frames
+    link_data = tp.link(data, 15, memory=3)
+
+    # Group by 'frame' and count the number of particles in each group
+    group_sizes = link_data.groupby('frame').size()
+    # Find frames where only one particle is identified
+    one_particle_frames = group_sizes[group_sizes == 1]
+    # Find frames where three particles are identified
+    three_particle_frames = group_sizes[group_sizes == 3]
+    # Print the frame numbers
+    print("Frames below have identified only one particle:")
+    print(one_particle_frames.index.tolist())
+    print("Frames below have identified three particles:")
+    print(three_particle_frames.index.tolist())
+
+    return
+
