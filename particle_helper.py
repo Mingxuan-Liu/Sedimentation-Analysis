@@ -52,3 +52,26 @@ def find_centroid(shadow_arr):
     :return: Indices for the centroid of the particle's 2D shadow, marked as 1 in the array
     """
     return ndimage.center_of_mass(shadow_arr)
+
+
+def crop_particle(shadow_arr, length, width):
+    """
+    This function crops the shadow array around the center according to the provided length and width.
+    :param shadow_arr: 2D shadow image projected from the 3D particle model
+    :param length: vertical length of the output array, in pixels
+    :param width: horizontal width of the output array, in pixels
+    :return: cropped 2D numpy array
+    """
+    center = find_centroid(shadow_arr)
+
+    top = int(center[0] - length / 2)
+    bottom = int(center[0] + length / 2)
+    left = int(center[1] - width / 2)
+    right = int(center[1] + width / 2)
+
+    cropped_shadow = shadow_arr[top:bottom, left:right]
+
+    return cropped_shadow
+
+
+
