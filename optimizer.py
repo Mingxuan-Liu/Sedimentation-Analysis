@@ -34,9 +34,9 @@ def abs_error(theta, particle, cropped_image, domain_size, length, width):
     return np.sum(np.abs(cropped_image - cropped_particle))
 
 
-def optimize_rotation_angle(initial_theta, particle, experimental_image, domain_size, length, width):
+def optimize_rotation_angle(initial_guess, particle, cropped_image, domain_size, length, width):
     """
-    Find the rotation angle that minimizes the absolute error between the experimental image and the particle model.
+    Find the rotation angle 'theta' that minimizes the absolute error between the .tif image and the particle model.
 
     Parameters:
     - initial_theta: Initial guess for the rotation angle.
@@ -52,10 +52,10 @@ def optimize_rotation_angle(initial_theta, particle, experimental_image, domain_
     # Minimize the absolute error
     result = minimize(
         abs_error,  # function to minimize
-        initial_theta,  # initial guess
-        args=(particle, experimental_image, domain_size, length, width),
+        initial_guess,  # initial guess for the theta value
+        args=(particle, cropped_image, domain_size, length, width),
         # additional arguments for `absolute_error`
-        bounds=[(0, 360)]  # bounds for theta
+        bounds=[(0, 180)]  # bounds for theta
     )
 
     # Return the optimal rotation angle
