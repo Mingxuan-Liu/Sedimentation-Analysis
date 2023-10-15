@@ -1,9 +1,12 @@
+import imageio
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 from matplotlib.patches import Patch
 from skimage.transform import resize
 from data_handler import *
+from image_helper import crop_image
+from particle_helper import crop_particle
 import json  # import the library that stores the particle configurations
 
 with open('particle_configurations.json') as f:
@@ -296,3 +299,40 @@ def plot_stretched_image(mip_selected, ax):
     ax.imshow(stretched_image, cmap='gray', aspect='auto')
     ax.set_title('Stretched Image')
     ax.axis('off')
+
+
+def compare_2d(frames, params, particle, thetas, boundary):
+    """
+    ... [rest of the docstring]
+    """
+    # Create a writer object
+    writer = imageio.get_writer('comparison_video.mp4', fps=20)
+
+    for fr in range(len(frames)):
+        # locate the centroid, then crop the image to the desired domain
+        cropped_image = crop_image(frames[fr], boundary[0], boundary[1], params)
+
+        # reset the particle and then rotate it by the optimal theta in this frame
+        particle.reset()
+        particle.rotate('ax2', thetas[fr])
+        # create the shadow of the 3D particle onto the xz plane
+        shadow_arr = particle.shadow('xz', 10)
+        # crop the shadow array to the desired domain
+        cropped_particle = crop_particle(shadow_arr, boundary[0], boundary[1])
+
+        # Convert the binary images to 3-channel images
+        # Experimental image: black and white
+        img_exp = np.stack([cropped_image * 255] * 3, axis=-1)
+        # Particle model: blue and white
+        img_particle = np.stack(
+            [cropped_particle * 255, np.zeros_like(cropped_particle), np.zeros_like(cropped_particle)], axis=-1)
+
+        # Concatenate the images horizontally
+        comparison_img = np.concatenate((img_exp, img_particle), axis=1)
+
+        # Write the frame to the video
+        writer.append_data(comparison_img.astype(np.uint8))
+
+    # Close the writer
+    writer.close()
+
