@@ -1,4 +1,5 @@
 import imageio
+import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
@@ -303,10 +304,18 @@ def plot_stretched_image(mip_selected, ax):
 
 def compare_2d(frames, params, particle, thetas, boundary):
     """
-    ... [rest of the docstring]
+    This function generates a video that compares the experimental image data and the optimized particle model by frame.
+    In each frame of this video, the cropped experimental image will be shown as black and white, while the cropped
+    particle model will be shown as blue and white.
+    :param frames: raw .tif experimental images
+    :param params: trackpy parameters that locate the centroid of the particle in the experimental data
+    :param particle: the particle model that will be rotated by optimal theta values recorded in 'theta'
+    :param thetas: optimal theta values found through the optimize_rotation_angle() function
+    :param boundary: a tuple that stores length and width of the two 2D numpy array
+    :return: a video that compares the binary experimental image and the binary particle model in the same domain.
     """
     # Create a writer object
-    writer = imageio.get_writer('comparison_video.mp4', fps=20)
+    writer = imageio.get_writer('compare_video/polar_comparison.mp4', fps=20)
 
     for fr in range(len(frames)):
         # locate the centroid, then crop the image to the desired domain
@@ -321,14 +330,17 @@ def compare_2d(frames, params, particle, thetas, boundary):
         cropped_particle = crop_particle(shadow_arr, boundary[0], boundary[1])
 
         # Convert the binary images to 3-channel images
-        # Experimental image: black and white
+        # Experimental image: white
         img_exp = np.stack([cropped_image * 255] * 3, axis=-1)
-        # Particle model: blue and white
+        # Particle model: blue
         img_particle = np.stack(
             [cropped_particle * 255, np.zeros_like(cropped_particle), np.zeros_like(cropped_particle)], axis=-1)
 
+        # Overlap of the experimental image and the particle model: white + blue = cyan
+        img_overlap = img_exp + img_particle
+
         # Concatenate the images horizontally
-        comparison_img = np.concatenate((img_exp, img_particle), axis=1)
+        comparison_img = np.concatenate((img_exp, img_particle, img_overlap), axis=1)
 
         # Write the frame to the video
         writer.append_data(comparison_img.astype(np.uint8))
