@@ -28,7 +28,7 @@ def plot_particle(particle, name, ax, transparency=False):
     particle : Particle
         The particle to visualize. It should have properties spheres (list of spheres
         with each sphere having center, radius, color, and material), center_of_mass (list of
-        coordinates), center_of_geometry (list of coordinates), offset, theta, and phi.
+        coordinates), center_of_geometry (list of coordinates), offset, and phi.
     name : str
         The name of the particle, which is used in the title of the plot.
     ax : matplotlib.axes.Axes
