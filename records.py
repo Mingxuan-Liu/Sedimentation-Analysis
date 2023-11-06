@@ -1,6 +1,8 @@
 RADIUS = 0.001  # m, radius of the sphere
 
-FLUID_DENSITY = 971  # density of the medium in (kg/m^3); in this case the silicone oil
+# density of the medium in (kg/m^3); in this case the silicone oil, which has specific gravity of 975, compared to the
+# density of water 997 kg/m^3.
+FLUID_DENSITY = 997 * 0.975
 
 # Densities needed for our sets of particles in (kg/m^3)
 DENSITIES = {
@@ -29,4 +31,11 @@ COLORS = {
     'pl': '#FFFFFF',
     'ZrO2': '#FFFFFF',
     'wc': '#979A9A'
+}
+
+# The measured terminal velocities
+MEASURED_VELOCITIES = {
+    'al': 0.0009334337077224641,
+    'st': 0.0034170370171462587,
+    'cu': 0.0039483145786769315
 }
