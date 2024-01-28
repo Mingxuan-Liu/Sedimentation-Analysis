@@ -43,7 +43,8 @@ def optimize_rotation_angle(particle, cropped_image, domain_size, boundary, init
     - domain_size: Side length of the squared domain for shadow generation.
     - boundary: Tuple (height, width) defining the size of the cropped area around the particle center.
     - initial_guess: Initial guess for the rotation angle.
-    - search_range: Range to search around the initial guess (default is 5).
+    - search_range: Range to search around the initial guess (default is 20).
+    - step_size: The step size for traversing through the angles (default is 0.5).
 
     Returns:
     - Optimal rotation angle.
@@ -51,12 +52,12 @@ def optimize_rotation_angle(particle, cropped_image, domain_size, boundary, init
     min_error = float('inf')  # Initialize minimum error as infinity
     optimal_theta = initial_guess  # Initialize optimal theta as the initial guess
 
-    # Define the search bounds
+    # Define the search bounds and step size
     lower_bound = max(0, initial_guess - search_range)
     upper_bound = min(180, initial_guess + search_range)
-
-    # Loop through possible theta values within the search bounds
-    for theta in range(lower_bound, upper_bound + 1):
+    step_size = 0.5
+    # Loop through possible theta values within the search bounds using numpy.arange for fractional steps
+    for theta in np.arange(lower_bound, upper_bound + step_size, step_size):
         # Calculate the absolute error for the current theta
         error = abs_error(theta, particle, cropped_image, domain_size, boundary)
 
