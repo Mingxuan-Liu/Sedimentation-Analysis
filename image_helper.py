@@ -45,7 +45,7 @@ def check_polar(frames, params):
     :param params: parameter sets for particle tracking using trackpy package
     :return: printed message of whether there is a bad frame in the list
     """
-    data = tp.batch(frames, **params);
+    data = tp.batch(frames, **params)
     # Link the particles in each frame to their positions in previous two frames
     link_data = tp.link(data, 15, memory=3)
 
@@ -62,4 +62,21 @@ def check_polar(frames, params):
     print(three_particle_frames.index.tolist())
 
     return
+
+
+def standardize(frame):
+    """
+    This function standardizes the bright pixels in the provided image, so that it has normal distribution of intensity.
+    :param frame: Provided image to be standardized.
+    :return: Image with only the bright pixels standardized.
+    """
+    bright_pixels = frame[frame > 0]
+    mean = np.mean(bright_pixels)
+    std = np.std(bright_pixels)
+
+    standardized_pixels = (bright_pixels - mean) / std
+    frame[frame > 0] = mean + standardized_pixels
+
+    return frame
+
 

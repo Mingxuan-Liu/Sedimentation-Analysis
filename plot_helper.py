@@ -348,3 +348,28 @@ def compare_2d(frames, params, particle, thetas, boundary):
     # Close the writer
     writer.close()
 
+
+def plot_grayscale(frame):
+    """
+    This function plots the provided grayscale frame and its intensity histogram. It helps streamline the plotting
+    process of grayscale images to manually check over and over again.
+    :param frame: One frame of the grayscale images.
+    :return: A 1 by 2 panel, with the left figure showing the grayscale image and right one showing its histogram.
+    """
+    # Set up the figure and axes for a side-by-side plot: one for the image, one for the histogram
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
+
+    # Display the image interactively
+    ax1.imshow(frame, cmap='gray')
+    ax1.set_title('Grayscale Image')
+
+    # Calculate and display the histogram
+    histogram, bin_edges = np.histogram(frame.flatten(), bins=256, range=[0, 256])
+
+    # Plot the histogram
+    ax2.plot(bin_edges[0:-1], histogram)
+    ax2.set_title('Grayscale Histogram')
+    ax2.set_xlabel('Pixel Intensity')
+    ax2.set_ylabel('Count')
+
+    plt.show()
