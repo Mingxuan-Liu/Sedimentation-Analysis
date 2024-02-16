@@ -4,6 +4,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 from matplotlib.patches import Patch
+import seaborn as sns
 from skimage.transform import resize
 from data_handler import *
 from particle_helper import find_centroid
@@ -148,6 +149,32 @@ def plot_shadow(particle, image_size, center, scale=7):
 
     # Display the plot
     plt.tight_layout()
+    plt.show()
+
+
+def plot_grayscale(frame):
+    """
+    This function plots the provided grayscale frame and its intensity histogram. It helps streamline the plotting
+    process of grayscale images to manually check over and over again.
+    :param frame: One frame of the grayscale images.
+    :return: A 1 by 2 panel, with the left figure showing the grayscale image and right one showing its histogram.
+    """
+    # Set up the figure and axes for a side-by-side plot: one for the image, one for the histogram
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
+
+    # Display the image interactively
+    ax1.imshow(frame, cmap='gray')
+    ax1.set_title('Grayscale Image')
+
+    # Calculate and display the histogram
+    histogram, bin_edges = np.histogram(frame.flatten(), bins=256, range=[0, 256])
+
+    # Plot the histogram
+    ax2.plot(bin_edges[0:-1], histogram)
+    ax2.set_title('Grayscale Histogram')
+    ax2.set_xlabel('Pixel Intensity')
+    ax2.set_ylabel('Count')
+
     plt.show()
 
 
@@ -341,27 +368,35 @@ def compare_2d(frames, particle, thetas):
     writer.close()
 
 
-def plot_grayscale(frame):
+def plot_rotcurve(time, thetas):
     """
-    This function plots the provided grayscale frame and its intensity histogram. It helps streamline the plotting
-    process of grayscale images to manually check over and over again.
-    :param frame: One frame of the grayscale images.
-    :return: A 1 by 2 panel, with the left figure showing the grayscale image and right one showing its histogram.
+    This function plots the rotation curve of the sedimenting particles, where the rotation angles are found by
+    minimizing the differences between experimental images and the particle model.
+    :param time: normalized time series.
+    :param thetas: optimized rotation angle in radians.
+    :return: A matplotlib plot with x-axis being the normalized time and y-axis being the rotation angles in radian.
     """
-    # Set up the figure and axes for a side-by-side plot: one for the image, one for the histogram
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
+    # Set the style of the visualization
+    sns.set_style("whitegrid")
+    plt.figure(figsize=(12, 6))  # Set the size of the figure
 
-    # Display the image interactively
-    ax1.imshow(frame, cmap='gray')
-    ax1.set_title('Grayscale Image')
+    # Plotting the optimal theta values
+    plt.plot(time, thetas, marker='o', linestyle='-',
+             color=sns.color_palette("viridis", n_colors=3)[0])
+    plt.title(r'Optimal $\theta$ over Time', fontsize=16)
+    plt.xlabel(r't /$\tau$', fontsize=14)
+    plt.ylabel(r'$\theta$', fontsize=14)
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=12)
+    plt.grid(True, linestyle='dotted', alpha=0.7)
 
-    # Calculate and display the histogram
-    histogram, bin_edges = np.histogram(frame.flatten(), bins=256, range=[0, 256])
+    # Set the y-axis limits
+    # plt.ylim([0, np.pi])
 
-    # Plot the histogram
-    ax2.plot(bin_edges[0:-1], histogram)
-    ax2.set_title('Grayscale Histogram')
-    ax2.set_xlabel('Pixel Intensity')
-    ax2.set_ylabel('Count')
+    # Manually set the tick marks at certain values
+    plt.yticks([0, np.pi / 4, np.pi / 2, 3 * np.pi / 4, np.pi],
+               ['0', r'$\frac{\pi}{4}$', r'$\frac{\pi}{2}$', r'$\frac{3\pi}{4}$', r'$\pi$'])
 
+    # Show the plot
+    plt.tight_layout()
     plt.show()
