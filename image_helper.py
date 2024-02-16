@@ -80,3 +80,35 @@ def standardize(frame):
     return frame
 
 
+def correct_grayscale(frames):
+    """
+    This function processes grayscale images to remove the camera artifacts and the flat field. In addition, it
+    normalizes each frame to ensure that the brightness of the particle remains consistent.
+    :param frames: The experimental images to be processed.
+    :return: Corrected images to be compared with particle shadow.
+    """
+    # Use the first image as the flat field
+    flat_field = frames[0]
+
+    # Initialize an empty list to store corrected images
+    corrected_images = []
+
+    # Loop over each frame in the sequence
+    for i, frame in enumerate(frames):
+        # Subtract the flat field from the current frame
+        corrected_frame = frame.astype(np.float32) - flat_field.astype(np.float32)
+        # Use two thresholds to set fluctuating pixels as 0
+        corrected_frame[corrected_frame < 45] = 0
+        corrected_frame[corrected_frame > 210] = 0
+
+        # Normalize the corrected frame
+        min_val = np.min(corrected_frame)
+        max_val = np.max(corrected_frame)
+        normalized_frame = (255 * (corrected_frame - min_val) / (max_val - min_val)).astype(np.uint8)
+
+        # Add the normalized frame to the list
+        corrected_images.append(normalized_frame)
+
+    return corrected_images
+
+
