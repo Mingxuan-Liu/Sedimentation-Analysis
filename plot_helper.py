@@ -339,6 +339,14 @@ def compare_2d(frames, particle, thetas):
     :param thetas: optimal theta values found through the optimize_rotation_angle() function
     :return: a video that compares the grayscale experimental image and particle model.
     """
+    def pad_image_to_macroblock(image, macro_block_size=16):
+        """Pad an image to ensure its dimensions are divisible by the given macro_block_size."""
+        height, width = image.shape[:2]
+        pad_height = (macro_block_size - height % macro_block_size) % macro_block_size
+        pad_width = (macro_block_size - width % macro_block_size) % macro_block_size
+        padded_image = np.pad(image, ((0, pad_height), (0, pad_width), (0, 0)), mode='constant', constant_values=0)
+        return padded_image
+
     # Create a writer object
     writer = imageio.get_writer('compare_video/polar_comparison (grayscale).mp4', fps=20)
     shape = np.shape(frames[0])
@@ -360,9 +368,14 @@ def compare_2d(frames, particle, thetas):
         # Overlap of the experimental image and the particle model: white + blue = cyan
         img_overlap = img_exp + img_particle
 
+        # Concatenate the three images above so that they can be displayed in a row
         img_combined = np.concatenate([img_exp, img_particle, img_overlap], axis=1)
+
+        # Pad the combined image so that its dimension can be divisible by the macro block
+        img_padded = pad_image_to_macroblock(img_combined)
+
         # Write the frame to the video
-        writer.append_data(img_combined.astype(np.uint8))
+        writer.append_data(img_padded.astype(np.uint8))
 
     # Close the writer
     writer.close()

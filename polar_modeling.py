@@ -4,8 +4,8 @@ from skimage import io
 from optimizer import optimize_rotation_angle
 from image_helper import correct_grayscale
 from data_handler import normalize_time
-from particle_helper import find_centroid, create_particle
-from plot_helper import plot_shadow, compare_2d, plot_rotcurve
+from particle_helper import create_particle
+from plot_helper import compare_2d, plot_rotcurve
 import warnings
 warnings.filterwarnings('ignore')
 import json
@@ -25,6 +25,7 @@ initial_theta = 90
 optimal_thetas = []
 
 # Record the start time
+print("============ Optimization Initiated ============")
 start_time = time.time()
 # Loop through frames
 for fr in range(10, 325):
@@ -40,7 +41,8 @@ for fr in range(10, 325):
 end_time = time.time()
 # Compute and print the elapsed time
 elapsed_time = end_time - start_time
-print(f"Elapsed time: {elapsed_time:.2f} seconds")
+print(f"============ Optimization Terminated ============ \n" +
+      f"Elapsed time: {elapsed_time:.2f} seconds")
 
 scaled_time = normalize_time(len(corrected_images[10:325]), frame_rate=6,name_light='st')
 
