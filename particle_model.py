@@ -203,23 +203,24 @@ class Particle:
         # Invalidate the cache to update the properties
         self.invalidate_cache()
 
-    def shadow(self, plane, domain_size, scale=7):
+    def shadow(self, plane, image_size, center, scale=7):
         """
-        Generate a binary 2D numpy array representing the shadow of the particle.
+        Generate a grayscale 2D numpy array representing the shadow of the particle.
 
         Parameters:
         - plane: A string indicating the projection plane ('xz' or 'yz').
-        - domain_size: Side length of the squared domain in mm.
+        - image_size: A tuple with the height and width of the experimental image in pixels.
+        - center: A tuple with the x and y coordinates of the particle center in mm.
         - scale: The scale factor converting mm to pixels (default is 7).
 
         Returns:
-        - A 2D numpy array where the shadow of the particle is represented by 1 and empty space by 0.
+        - A 2D numpy array where the shadow of the particle is represented with grayscale values.
         """
-        # Calculate the grid size in pixels
-        grid_size = int(domain_size * scale)
+        # The grid size is now directly taken from the image dimensions
+        grid_height, grid_width = image_size
 
         # Initialize a 2D grid with zeros
-        shadow_grid = np.zeros((grid_size, grid_size), dtype=int)
+        shadow_grid = np.zeros((grid_height, grid_width), dtype=np.uint8)
 
         # Determine the 2D coordinates based on the specified projection plane
         if plane == 'xz':
@@ -229,23 +230,25 @@ class Particle:
         else:
             raise ValueError("Invalid projection plane. Choose from 'xz' or 'yz'.")
 
-        # Convert continuous coordinates to discrete grid coordinates
+        # Define the center of particle shadow as the centroid of experimental image (floating point)
+        center_x, center_y = (center[0], center[1])
+
+        # Iterate over all spheres in the particle configuration
         for s in self.spheres:
-            x, z = s.center[indices[0]], s.center[indices[1]]
-            # Convert to grid coordinates
-            i = int((x + domain_size / 2) * scale)
-            j = int((z + domain_size / 2) * scale)
-            # Mark the grid cell and its neighbors within the radius as 1
+            # Read the center coordinate of the sphere from the configuration (floating point)
+            sph_x, sph_y = s.center[indices[0]], s.center[indices[1]]
+            # Convert to grid coordinates relative to the center of particle
+            i = center_x + (sph_x - self.center_of_geometry[indices[0]]) * scale
+            j = center_y + (sph_y - self.center_of_geometry[indices[1]]) * scale
+            # Mark the grid cell and its neighbors within the radius with grayscale values
             radius_pixels = int(s.radius * scale)
             for di in range(-radius_pixels, radius_pixels + 1):
                 for dj in range(-radius_pixels, radius_pixels + 1):
-                    if (di ** 2 + dj ** 2) ** 0.5 <= radius_pixels:
-                        shadow_grid[i + di, j + dj] = 1
+                    distance = np.sqrt(di ** 2 + dj ** 2)  # Calculate the distance for Gaussian function
+                    if distance <= radius_pixels:
+                        # Apply a Gaussian function to determine the pixel intensity
+                        intensity = 255 * np.exp(-(distance ** 2) / (2 * (radius_pixels * 2 / 2) ** 2))
+                        shadow_grid[int(i + di), int(j + dj)] = intensity
 
-        # Rotate the shadow grid 90 degrees counter-clockwise
-        # The shadow matrix needs to be rotated because the i index goes from top to bottom, and the j index goes from
-        # left to right. To mimic the experimental data, the matrix needs to be rotated counter-clockwise so that the i
-        # index goes from left to right, and the j index goes from bottom to top.
-        shadow_grid = np.rot90(shadow_grid, k=1)
         return shadow_grid
 

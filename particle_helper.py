@@ -45,13 +45,13 @@ def create_particle(name):
     return p
 
 
-def find_centroid(shadow_arr):
+def find_centroid(arr):
     """
-    This function uses the scipy.ndimage.center_of_mass() function to locate the centroid of 2D shadow array
-    :param shadow_arr: 2-D shadow image of the 3D particle model
-    :return: Indices for the centroid of the particle's 2D shadow, marked as 1 in the array
+    This function uses the scipy.ndimage.center_of_mass() function to locate the centroid of 2D array (image or shadow)
+    :param arr: 2-D array of either the experimental image or the particle shadow
+    :return: Indices for the centroid of the 2D array, marked as 1 in the array
     """
-    return ndimage.center_of_mass(shadow_arr)
+    return ndimage.center_of_mass(arr)
 
 
 def crop_particle(shadow_arr, length, width):

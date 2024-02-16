@@ -6,8 +6,7 @@ import matplotlib.gridspec as gridspec
 from matplotlib.patches import Patch
 from skimage.transform import resize
 from data_handler import *
-from image_helper import crop_image
-from particle_helper import crop_particle
+from particle_helper import find_centroid
 import json  # import the library that stores the particle configurations
 
 with open('particle_configurations.json') as f:
@@ -120,30 +119,31 @@ def plot_principal_axes(com, eigenvectors, length, ax):
                   color=colors[i], alpha=0.6, linewidth=2)
 
 
-def plot_shadow(particle, domain_size, scale=7):
+def plot_shadow(particle, image_size, center, scale=7):
     """
     Visualize the shadow of the particle on both 'xz' and 'yz' planes.
 
     Parameters:
-    - particle: The Particle object.
-    - domain_size: Side length of the squared domain in mm.
+    - particle: The ParticleSimulation object.
+    - image_size: A tuple with the height and width of the experimental image in pixels.
+    - center: A tuple with the x and y coordinates of the particle center in mm.
     - scale: The scale factor converting mm to pixels (default is 7).
     """
     # Generate the shadow grids
-    shadow_grid_xz = particle.shadow('xz', domain_size, scale)
-    shadow_grid_yz = particle.shadow('yz', domain_size, scale)
+    shadow_grid_xz = particle.shadow('xz', image_size, center, scale)
+    shadow_grid_yz = particle.shadow('yz', image_size, center, scale)
 
     # Create a plot with 1 row and 2 columns
-    fig, axs = plt.subplots(1, 2, figsize=(8, 6))
+    fig, axs = plt.subplots(1, 2, figsize=(12, 6))
 
     # Display the shadow grid for 'xz' plane
-    axs[0].imshow(shadow_grid_xz, cmap='gray_r', aspect='equal')
-    axs[0].axis('off')
+    axs[0].imshow(shadow_grid_xz, cmap='gray')
+    axs[0].axis('on')  # Changed to 'on' to see the axis if needed
     axs[0].set_title('Shadow on X-Z Plane')
 
     # Display the shadow grid for 'yz' plane
-    axs[1].imshow(shadow_grid_yz, cmap='gray_r', aspect='equal')
-    axs[1].axis('off')
+    axs[1].imshow(shadow_grid_yz, cmap='gray')
+    axs[1].axis('on')  # Changed to 'on' to see the axis if needed
     axs[1].set_title('Shadow on Y-Z Plane')
 
     # Display the plot
@@ -302,48 +302,40 @@ def plot_stretched_image(mip_selected, ax):
     ax.axis('off')
 
 
-def compare_2d(frames, params, particle, thetas, boundary):
+def compare_2d(frames, particle, thetas):
     """
     This function generates a video that compares the experimental image data and the optimized particle model by frame.
-    In each frame of this video, the cropped experimental image will be shown as black and white, while the cropped
-    particle model will be shown as blue and white.
-    :param frames: raw .tif experimental images
-    :param params: trackpy parameters that locate the centroid of the particle in the experimental data
-    :param particle: the particle model that will be rotated by optimal theta values recorded in 'theta'
+    In each frame of this video, the corrected experimental image will be shown as black and white, while the simulated
+    particle shadow will be shown as blue and white.
+    :param frames: corrected .tif experimental images
+    :param particle: the particle model that will be rotated by optimal theta values recorded in 'thetas'
     :param thetas: optimal theta values found through the optimize_rotation_angle() function
-    :param boundary: a tuple that stores length and width of the two 2D numpy array
-    :return: a video that compares the binary experimental image and the binary particle model in the same domain.
+    :return: a video that compares the grayscale experimental image and particle model.
     """
     # Create a writer object
-    writer = imageio.get_writer('compare_video/polar_comparison.mp4', fps=20)
-
+    writer = imageio.get_writer('compare_video/polar_comparison (grayscale).mp4', fps=20)
+    shape = np.shape(frames[0])
     for fr in range(len(frames)):
-        # locate the centroid, then crop the image to the desired domain
-        cropped_image = crop_image(frames[fr], boundary[0], boundary[1], params)
-
-        # reset the particle and then rotate it by the optimal theta in this frame
+        # Reset the particle and then rotate it by the optimal theta in this frame
         particle.reset()
         particle.rotate('ax2', thetas[fr])
-        # create the shadow of the 3D particle onto the xz plane
-        shadow_arr = particle.shadow('xz', 10)
-        # crop the shadow array to the desired domain
-        cropped_particle = crop_particle(shadow_arr, boundary[0], boundary[1])
+        # Create the shadow of the 3D particle onto the xz plane
+        shadow_arr = particle.shadow('xz', shape, find_centroid(frames[fr]))
 
         # Convert the binary images to 3-channel images
         # Experimental image: white
-        img_exp = np.stack([cropped_image * 255] * 3, axis=-1)
+        img_exp = np.stack([frames[fr], frames[fr], frames[fr]], axis=-1)  # Use frames[fr] to select the current frame
+
         # Particle model: blue
         img_particle = np.stack(
-            [cropped_particle * 255, np.zeros_like(cropped_particle), np.zeros_like(cropped_particle)], axis=-1)
+            [shadow_arr, np.zeros_like(shadow_arr), np.zeros_like(shadow_arr)], axis=-1)
 
         # Overlap of the experimental image and the particle model: white + blue = cyan
         img_overlap = img_exp + img_particle
 
-        # Concatenate the images horizontally
-        comparison_img = np.concatenate((img_exp, img_particle, img_overlap), axis=1)
-
+        img_combined = np.concatenate([img_exp, img_particle, img_overlap], axis=1)
         # Write the frame to the video
-        writer.append_data(comparison_img.astype(np.uint8))
+        writer.append_data(img_combined.astype(np.uint8))
 
     # Close the writer
     writer.close()
