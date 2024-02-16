@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from records import TERMINAL_VELOCITIES, RADIUS
 
 
 def scale_values(data, scale, frame_rate, time_scale):
@@ -16,6 +17,21 @@ def scale_values(data, scale, frame_rate, time_scale):
     scaled_time = (data['frame'] / frame_rate) / time_scale
 
     return scaled_x, scaled_y, scaled_time
+
+
+def normalize_time(frame_num, frame_rate, name_light):
+    """
+    This function normalizes the time series of the data by its defined timescale.
+    :param frame_num: Total number of frames in the data
+    :param frame_rate: Frame rate of the camera
+    :param name_light: Name of the lightest sphere in the particle
+    :return: Normalized time
+    """
+    v_light_term = TERMINAL_VELOCITIES[name_light]  # terminal velocity of the lightest particle
+    tau = RADIUS / v_light_term  # timescale of the sedimentation process
+    # normalize the times by the timescale tau
+    normalized_time = np.arange(frame_num) / (frame_rate * tau)
+    return normalized_time
 
 
 def rolling_average(data, neigh_num):
