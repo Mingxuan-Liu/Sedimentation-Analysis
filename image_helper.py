@@ -104,7 +104,7 @@ def correct_grayscale(frames):
         # Normalize the corrected frame
         min_val = np.min(corrected_frame)
         max_val = np.max(corrected_frame)
-        normalized_frame = (255 * (corrected_frame - min_val) / (max_val - min_val)).astype(np.uint8)
+        normalized_frame = 255 * (corrected_frame - min_val) / (max_val - min_val)
 
         # Add the normalized frame to the list
         corrected_images.append(normalized_frame)
