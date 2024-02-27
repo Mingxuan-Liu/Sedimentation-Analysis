@@ -403,12 +403,11 @@ def plot_diagnosis(frames):
         bright_pixels_count.append(np.sum(frame > 0))
 
     # Create a 2 by 1 subplot
-    fig, axs = plt.subplots(2, 1, figsize=(10, 8))
+    fig, axs = plt.subplots(2, 1, figsize=(12, 10))
 
     # Plot the total intensity of each frame on the top panel
     axs[0].plot(total_intensity, '-o')
     axs[0].set_title('Total Intensity per Frame')
-    axs[0].set_xlabel('Frame Number')
     axs[0].set_ylabel('Total Intensity')
 
     # Plot the number of bright pixels of each frame on the bottom panel
@@ -422,6 +421,8 @@ def plot_diagnosis(frames):
 
     # Show the plot
     plt.show()
+
+
 def plot_rotcurve(time, thetas):
     """
     This function plots the rotation curve of the sedimenting particles, where the rotation angles are found by

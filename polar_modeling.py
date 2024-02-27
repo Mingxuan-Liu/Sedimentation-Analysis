@@ -14,14 +14,14 @@ with open('particle_configurations.json') as f:
 
 # Load the .tif image, and then invert it so that the particle appears white
 frames = np.invert(io.imread("1Steel&1Cu_CopperUp_27_6fps_in crop.tif"))
-corrected_images = correct_grayscale(frames)
+corrected_images = correct_grayscale(frames)[10:325]
 plot_diagnosis(corrected_images)
 
 config_name = "dimer-st-cu"
 p = create_particle(config_name)
 
 # Initial guess for the rotation angle
-initial_theta = 90
+initial_theta = 0
 # List to store the optimal theta values
 optimal_thetas = []
 
@@ -29,7 +29,7 @@ optimal_thetas = []
 print("============ Optimization Initiated ============")
 start_time = time.time()
 # Loop through frames
-for fr in range(10, 325):
+for fr in range(len(corrected_images)):
     # Find the optimal rotation angle
     optimal_theta = optimize_rotation_angle(p, corrected_images[fr], initial_theta, search_range=10)
     # Use the found optimal rotation angle as the initial guess for the next frame
@@ -45,11 +45,11 @@ elapsed_time = end_time - start_time
 print(f"============ Optimization Terminated ============ \n" +
       f"Elapsed time: {elapsed_time:.2f} seconds")
 
-scaled_time = normalize_time(len(corrected_images[10:325]), frame_rate=6,name_light='st')
+scaled_time = normalize_time(len(corrected_images), frame_rate=6,name_light='st')
 
 # Convert the optimal theta values to radians
 optimal_thetas_rad = np.radians(optimal_thetas)
 
-plot_rotcurve(scaled_time, optimal_thetas_rad)
+plot_rotcurve(scaled_time, abs(optimal_thetas_rad))
 
-compare_2d(corrected_images[10:325], p, optimal_thetas)
+compare_2d(corrected_images, p, optimal_thetas)

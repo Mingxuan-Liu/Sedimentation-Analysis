@@ -235,11 +235,13 @@ class Particle:
 
         # Iterate over all spheres in the particle configuration
         for s in self.spheres:
+            # When converting Cartesian coordinates to indices, the x and y must be flipped since in Cartesian system
+            # 'x' goes from left to right, but in numpy array 'i' goes from top to bottom.
             # Read the center coordinate of the sphere from the configuration (floating point)
-            sph_x, sph_y = s.center[indices[0]], s.center[indices[1]]
+            sph_x, sph_y = s.center[indices[1]], s.center[indices[0]]
             # Convert to grid coordinates relative to the center of particle
-            i = center_x + (sph_x - self.center_of_geometry[indices[0]]) * scale
-            j = center_y + (sph_y - self.center_of_geometry[indices[1]]) * scale
+            i = center_x + (sph_x - self.center_of_geometry[indices[1]]) * scale
+            j = center_y + (sph_y - self.center_of_geometry[indices[0]]) * scale
             # Mark the grid cell and its neighbors within the radius with grayscale values
             radius_pixels = int(s.radius * scale)
             for di in range(-radius_pixels, radius_pixels + 1):
