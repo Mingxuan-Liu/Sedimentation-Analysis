@@ -329,7 +329,7 @@ def plot_stretched_image(mip_selected, ax):
     ax.axis('off')
 
 
-def compare_2d(frames, particle, thetas):
+def compare_2d(frames, particle, thetas, spread):
     """
     This function generates a video that compares the experimental image data and the optimized particle model by frame.
     In each frame of this video, the corrected experimental image will be shown as black and white, while the simulated
@@ -337,6 +337,7 @@ def compare_2d(frames, particle, thetas):
     :param frames: corrected .tif experimental images
     :param particle: the particle model that will be rotated by optimal theta values recorded in 'thetas'
     :param thetas: optimal theta values found through the optimize_rotation_angle() function
+    :param spread: spread of the Gaussian function to determine the pixel intensity of the simulated particle.
     :return: a video that compares the grayscale experimental image and particle model.
     """
     def pad_image_to_macroblock(image, macro_block_size=16):
@@ -355,7 +356,7 @@ def compare_2d(frames, particle, thetas):
         particle.reset()
         particle.rotate('ax2', thetas[fr])
         # Create the shadow of the 3D particle onto the xz plane
-        shadow_arr = particle.shadow('xz', shape, find_centroid(frames[fr]))
+        shadow_arr = particle.shadow('xz', shape, find_centroid(frames[fr]), spread=spread)
 
         # Convert the binary images to 3-channel images
         # Experimental image: white

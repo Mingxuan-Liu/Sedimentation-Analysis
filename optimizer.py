@@ -19,13 +19,14 @@ def abs_error(particle, image):
     return np.sum(np.abs(particle - image))
 
 
-def optimize_rotation_angle(particle, image, initial_guess, search_range=20):
+def optimize_rotation_angle(particle, image, spread, initial_guess, search_range=20):
     """
     Find the rotation angle 'theta' that minimizes the absolute error between the .tif image and the particle model.
 
     Parameters:
     - particle: The particle model.
     - image: The processed experimental image data.
+    - spread: Spread of the Gaussian function to determine pixel intensities of the particle.
     - initial_guess: Initial guess for the rotation angle.
     - search_range: Range to search around the initial guess (default is 20).
 
@@ -51,7 +52,7 @@ def optimize_rotation_angle(particle, image, initial_guess, search_range=20):
         # Rotate the particle
         particle.rotate('ax2', theta)
         # Calculate the shadow array
-        shadow_arr = particle.shadow('xz', shape, centroid)
+        shadow_arr = particle.shadow('xz', shape, centroid, spread=spread)
         # Calculate the absolute error for the current theta
         error = abs_error(shadow_arr, image)
 

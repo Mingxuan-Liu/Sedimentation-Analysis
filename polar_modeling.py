@@ -20,6 +20,8 @@ plot_diagnosis(corrected_images)
 config_name = "dimer-st-cu"
 p = create_particle(config_name)
 
+# Spread of the Gaussian function to determine the pixel intensity of the particle (the range [1,2] works the best)
+spread = 2
 # Initial guess for the rotation angle
 initial_theta = 0
 # List to store the optimal theta values
@@ -35,7 +37,7 @@ for fr in range(len(corrected_images)):
     else:
         search_range = 5
     # Find the optimal rotation angle
-    optimal_theta = optimize_rotation_angle(p, corrected_images[fr], initial_theta, search_range=search_range)
+    optimal_theta = optimize_rotation_angle(p, corrected_images[fr], spread, initial_theta, search_range=search_range)
     # Use the found optimal rotation angle as the initial guess for the next frame
     initial_theta = optimal_theta
     # Append the optimal theta to the list
@@ -56,4 +58,4 @@ optimal_thetas_rad = np.radians(optimal_thetas)
 
 plot_rotcurve(scaled_time, abs(optimal_thetas_rad))
 
-compare_2d(corrected_images, p, optimal_thetas)
+compare_2d(corrected_images, p, optimal_thetas, spread)
