@@ -38,7 +38,8 @@ def optimize_rotation_angle(particle, image, initial_guess, search_range=20):
     # Define the search bounds and step size
     lower_bound = initial_guess - search_range
     upper_bound = initial_guess + search_range
-    step_size = 1
+    # Step size 0.5 is a sweet spot that balances the running time and accuracy.
+    step_size = 0.5
 
     # Define the shape and centroid of the experimental image
     shape = np.shape(image)

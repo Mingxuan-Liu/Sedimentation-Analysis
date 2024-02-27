@@ -30,8 +30,12 @@ print("============ Optimization Initiated ============")
 start_time = time.time()
 # Loop through frames
 for fr in range(len(corrected_images)):
+    if fr == 0:
+        search_range = 10
+    else:
+        search_range = 5
     # Find the optimal rotation angle
-    optimal_theta = optimize_rotation_angle(p, corrected_images[fr], initial_theta, search_range=10)
+    optimal_theta = optimize_rotation_angle(p, corrected_images[fr], initial_theta, search_range=search_range)
     # Use the found optimal rotation angle as the initial guess for the next frame
     initial_theta = optimal_theta
     # Append the optimal theta to the list

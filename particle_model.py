@@ -203,7 +203,7 @@ class Particle:
         # Invalidate the cache to update the properties
         self.invalidate_cache()
 
-    def shadow(self, plane, image_size, center, scale=7):
+    def shadow(self, plane, image_size, center, scale=7, spread=0.5):
         """
         Generate a grayscale 2D numpy array representing the shadow of the particle.
 
@@ -244,12 +244,14 @@ class Particle:
             j = center_y + (sph_y - self.center_of_geometry[indices[0]]) * scale
             # Mark the grid cell and its neighbors within the radius with grayscale values
             radius_pixels = int(s.radius * scale)
+            # Calculate the sigma of the Gaussian function to determine the spread of intensities
+            sigma = radius_pixels * spread
             for di in range(-radius_pixels, radius_pixels + 1):
                 for dj in range(-radius_pixels, radius_pixels + 1):
                     distance = np.sqrt(di ** 2 + dj ** 2)  # Calculate the distance for Gaussian function
                     if distance <= radius_pixels:
                         # Apply a Gaussian function to determine the pixel intensity
-                        intensity = 255 * np.exp(-(distance ** 2) / (2 * (radius_pixels * 2 / 2) ** 2))
+                        intensity = 255 * np.exp(-(distance ** 2) / (2 * sigma ** 2))
                         shadow_grid[int(i + di), int(j + dj)] = intensity
 
         return shadow_grid
