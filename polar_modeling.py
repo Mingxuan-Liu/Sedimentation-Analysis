@@ -5,7 +5,7 @@ from optimizer import optimize_rotation_angle
 from image_helper import correct_grayscale
 from data_handler import normalize_time
 from particle_helper import create_particle
-from plot_helper import compare_2d, plot_rotcurve
+from plot_helper import compare_2d, plot_diagnosis, plot_rotcurve
 import warnings
 warnings.filterwarnings('ignore')
 import json
@@ -15,6 +15,7 @@ with open('particle_configurations.json') as f:
 # Load the .tif image, and then invert it so that the particle appears white
 frames = np.invert(io.imread("1Steel&1Cu_CopperUp_27_6fps_in crop.tif"))
 corrected_images = correct_grayscale(frames)
+plot_diagnosis(corrected_images)
 
 config_name = "dimer-st-cu"
 p = create_particle(config_name)

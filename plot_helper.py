@@ -381,6 +381,47 @@ def compare_2d(frames, particle, thetas):
     writer.close()
 
 
+def plot_diagnosis(frames):
+    """
+    This function plots the diagnostic information for an image sequence. Often times this function is used to check if
+    the intensity of the particle is consistent, and whether it may destabilize the modeling algorithm.
+    :param frames: The image sequence to be diagnosed.
+    :return: A 2 by 1 figure with the top panel showing the total intensity of each frame, and the bottom panel showing
+    the number of bright pixels (whose intensity is larger than 0) in each frame.
+    """
+    # Initialize lists to hold total intensity and bright pixel counts for each frame
+    total_intensity = []
+    bright_pixels_count = []
+
+    # Iterate over each frame in the sequence
+    for frame in frames:
+        # Calculate the total intensity of the current frame
+        total_intensity.append(np.sum(frame))
+
+        # Count the number of bright pixels in the current frame
+        # Here we consider a 'bright pixel' to be any pixel with an intensity > 0
+        bright_pixels_count.append(np.sum(frame > 0))
+
+    # Create a 2 by 1 subplot
+    fig, axs = plt.subplots(2, 1, figsize=(10, 8))
+
+    # Plot the total intensity of each frame on the top panel
+    axs[0].plot(total_intensity, '-o')
+    axs[0].set_title('Total Intensity per Frame')
+    axs[0].set_xlabel('Frame Number')
+    axs[0].set_ylabel('Total Intensity')
+
+    # Plot the number of bright pixels of each frame on the bottom panel
+    axs[1].plot(bright_pixels_count, '-o', color='orange')
+    axs[1].set_title('Number of Bright Pixels per Frame')
+    axs[1].set_xlabel('Frame Number')
+    axs[1].set_ylabel('Bright Pixels Count')
+
+    # Adjust layout to prevent overlap
+    plt.tight_layout()
+
+    # Show the plot
+    plt.show()
 def plot_rotcurve(time, thetas):
     """
     This function plots the rotation curve of the sedimenting particles, where the rotation angles are found by
