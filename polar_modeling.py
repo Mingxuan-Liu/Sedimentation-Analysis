@@ -3,7 +3,7 @@ import numpy as np
 from skimage import io
 from optimizer import optimize_rotation_angle
 from image_helper import correct_grayscale
-from data_handler import normalize_time
+from data_handler import normalize_time, rolling_average
 from particle_helper import create_particle
 from plot_helper import compare_2d, plot_diagnosis, plot_rotcurve
 import warnings
@@ -55,7 +55,8 @@ scaled_time = normalize_time(len(corrected_images), frame_rate=6,name_light='st'
 
 # Convert the optimal theta values to radians
 optimal_thetas_rad = np.radians(optimal_thetas)
-
+# Plot the rotation curve of the particle (the second figure is smoothened using rolling average)
 plot_rotcurve(scaled_time, abs(optimal_thetas_rad))
-
+plot_rotcurve(scaled_time, rolling_average(abs(optimal_thetas_rad), neigh_num=10))
+# Compare the falling trajectories of experimental images and simulated shadow
 compare_2d(corrected_images, p, optimal_thetas, spread)
