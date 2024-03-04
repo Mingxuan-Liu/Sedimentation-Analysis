@@ -6,6 +6,7 @@ and flipping.
 @author: Mingxuan Liu
 @date: Jul 13, 2023
 """
+import random
 
 import numpy as np
 from scipy.spatial.transform import Rotation
@@ -249,7 +250,7 @@ class Particle:
             for di in range(-radius_pixels, radius_pixels + 1):
                 for dj in range(-radius_pixels, radius_pixels + 1):
                     distance = np.sqrt(di ** 2 + dj ** 2)  # Calculate the distance for Gaussian function
-                    if distance <= radius_pixels:
+                    if distance <= radius_pixels + 0.25 * random.randint(0, 1):  # Add randomness to the sphere edge
                         # Apply a Gaussian function to determine the pixel intensity
                         intensity = 255 * np.exp(-(distance ** 2) / (2 * sigma ** 2))
                         shadow_grid[int(i + di), int(j + dj)] = intensity
