@@ -13,7 +13,7 @@ def crop_image(frame, length, width, params):
     - params: Parameters for tp.locate function (diameter, minmass, etc.)
 
     Returns:
-    - A binary 2D numpy array cropped around the center of the spheres.
+    - A 2D numpy array cropped around the center of the spheres.
     """
     # Locate the spheres
     f = tp.locate(frame, **params)
